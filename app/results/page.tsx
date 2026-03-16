@@ -10,6 +10,7 @@ import CategoryCard from "@/components/results/CategoryCard";
 import InsightCard from "@/components/results/InsightCard";
 import NetWorthChart from "@/components/results/NetWorthChart";
 import LoadingAnalysis from "@/components/results/LoadingAnalysis";
+import SimulatorPanel from "@/components/simulator/SimulatorPanel";
 import Link from "next/link";
 
 type Phase = "loading" | "results";
@@ -25,19 +26,21 @@ export default function ResultsPage() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("loading");
   const [result, setResult] = useState<WealthIQResult | null>(null);
+  const [profile, setProfile] = useState<FinancialProfile | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? sessionStorage.getItem("wealthiq-profile") : null;
     if (!raw) { router.push("/check"); return; }
 
-    const profile: FinancialProfile = JSON.parse(raw);
+    const parsed: FinancialProfile = JSON.parse(raw);
+    setProfile(parsed);
 
     // Calculate score (instant, deterministic)
-    const wealthIQResult = calculateWealthIQ(profile);
+    const wealthIQResult = calculateWealthIQ(parsed);
     setResult(wealthIQResult);
 
-    // Generate AI insights (async, results show after loading animation completes)
+    // Generate AI insights (async)
     fetch("/api/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,7 +56,7 @@ export default function ResultsPage() {
     return <LoadingAnalysis onComplete={() => setPhase("results")} />;
   }
 
-  if (!result) return null;
+  if (!result || !profile) return null;
 
   return (
     <main className="min-h-screen pb-20">
@@ -119,6 +122,13 @@ export default function ResultsPage() {
               : <p className="text-slate-400 text-sm">מייצר תובנות...</p>
             }
           </div>
+        </section>
+
+        {/* What-If Simulator */}
+        <section>
+          <h2 className="text-lg font-bold mb-1">סימולטור ״מה אם?״</h2>
+          <p className="text-sm text-slate-500 mb-4">הזז את המחוונים וראה איך החלטות שונות משפיעות על העתיד הפיננסי שלך</p>
+          <SimulatorPanel profile={profile} />
         </section>
 
         {/* Bonuses & Penalties */}

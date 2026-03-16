@@ -1,8 +1,8 @@
 # WealthIQ Build Progress
 
 Last updated: March 17, 2026
-Last agent: Claude Code — Sprint 4
-Current sprint: 5
+Last agent: Claude Code — Sprint 5
+Current sprint: 6
 
 ## Sprint Status
 
@@ -10,7 +10,7 @@ Current sprint: 5
 - [x] Sprint 2: Score Engine Hardening (tests pass, edge cases handled) ✅
 - [x] Sprint 3: Questionnaire Polish (all 9 sections interactive, validated) ✅
 - [x] Sprint 4: Results Dashboard (score gauge, categories, insights render) ✅
-- [ ] Sprint 5: What-If Simulator (interactive sliders, projection chart)
+- [x] Sprint 5: What-If Simulator (interactive sliders, projection chart) ✅
 - [ ] Sprint 6: Visual Design Pass (animations, mobile, RTL polish)
 - [ ] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel)
 - [ ] Sprint 8: Growth Features (OCR, accounts, PDF export)
@@ -131,10 +131,48 @@ Current sprint: 5
 **`components/results/ScoreGauge.tsx`**
 - Score ring circle: `style={{ filter: "drop-shadow(0 0 10px {color}) drop-shadow(0 0 20px {color}40)" }}`
 
-### Still Needs Work (Sprint 5+):
+## Sprint 5 Checklist
 
-- What-if simulator components not yet built
+- [x] `npm run build` passes with zero errors
+- [x] `npm run type-check` passes with zero errors
+- [x] 94/94 tests still pass
+- [x] `SimulatorPanel`: 4 sliders (extra contribution ₪0–5K, retirement age 55–75, fee reduction 0–0.5%, salary growth 0–10%), debounced 300ms
+- [x] `ProjectionChart`: Recharts LineChart, baseline (dashed gray #4B5563) + modified (solid gold #D4A843), Y-axis with K/M formatting, RTL tooltip
+- [x] `ImpactSummary`: 3 cards — net worth delta, monthly passive income, retirement age delta; green/red coloring
+- [x] Integrated into `results/page.tsx` below AI insights with section header
+- [x] Profile stored in state (`useState<FinancialProfile>`) and passed to SimulatorPanel
+
+### What was added in Sprint 5:
+
+**`components/simulator/ProjectionChart.tsx`** (new)
+- Recharts `LineChart` with `ResponsiveContainer`
+- Baseline: dashed gray line (`strokeDasharray="5 4"`)
+- Modified: solid gold line (`stroke="#D4A843"`)
+- Y-axis: `formatY()` helper outputs `₪1.2M` / `₪850K`
+- Tooltip: RTL direction, dark background, both lines labeled in Hebrew
+- Legend: aligned right, Hebrew labels
+
+**`components/simulator/ImpactSummary.tsx`** (new)
+- 3-column grid of `ImpactCard`s
+- Net worth delta: `+₪X` / `-₪X` in green/red
+- Monthly passive income (4% withdrawal rate from API summary)
+- Retirement age with years delta
+
+**`components/simulator/SimulatorPanel.tsx`** (new)
+- 4 `SliderRow` components with Hebrew labels and gold value display
+- `debounceRef` clears previous timeout on each slider move (300ms debounce)
+- On mount: immediately calls `/api/simulate` with baseline (no scenarios) to populate chart
+- Scenarios only added to API call when value differs from default (avoids empty array issues)
+
+**`app/results/page.tsx`**
+- Added `profile` state (`useState<FinancialProfile | null>`)
+- `setProfile(parsed)` alongside `setResult(wealthIQResult)` in useEffect
+- New section: `סימולטור ״מה אם?״` with subtitle and `<SimulatorPanel profile={profile} />`
+
+### Still Needs Work (Sprint 6+):
+
 - OG share image, 404 page, PDF export
+- Mobile layout polish
 
 ## What Exists Already
 
