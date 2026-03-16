@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap');
+
+:root {
+  --gold: #D4A843;
+  --gold-dim: #A67C1E;
+  --dark-bg: #0A0A0F;
+  --dark-card: #12121A;
+  --dark-border: #1E1E2E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A3B8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { direction: rtl; }
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Score gauge animation */
+.score-ring { transition: stroke-dashoffset 1.5s ease-out; }
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(18, 18, 26, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 168, 67, 0.1);
+  border-radius: 16px;
+}
+
+/* Gold gradient text */
+.gold-text {
+  background: linear-gradient(135deg, #D4A843 0%, #FFE799 50%, #D4A843 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Shimmer loading effect */
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark-bg); }
+::-webkit-scrollbar-thumb { background: var(--dark-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+/* Input focus ring */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.3);
+}
+
+/* Buttons */
+.btn-gold {
+  background: linear-gradient(135deg, #D4A843, #C49A38);
+  color: #0A0A0F;
+  font-weight: 700;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn-gold:hover { opacity: 0.92; transform: translateY(-1px); }
+.btn-gold:active { transform: translateY(0); }
+
+.btn-outline {
+  background: transparent;
+  color: #94A3B8;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #1E1E2E;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-outline:hover { border-color: #D4A843; color: #D4A843; }
+
+/* Form inputs */
+.input-field {
+  width: 100%;
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1E1E2E;
+  border-radius: 12px;
+  padding: 0.625rem 0.875rem;
+  color: #fff;
+  font-size: 0.875rem;
+  font-family: 'Heebo', sans-serif;
+  transition: border-color 0.15s;
+}
+.input-field:focus { border-color: rgba(212, 168, 67, 0.5); }
+.input-field::placeholder { color: #4B5563; }
+
+/* Progress bar fill */
+.progress-fill {
+  background: linear-gradient(90deg, #D4A843, #FFE799);
+}
+
+/* Gold gradient text (alias) */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #D4A843 0%, #FFE799 50%, #D4A843 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

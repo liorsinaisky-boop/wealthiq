@@ -1,8 +1,8 @@
 # WealthIQ Build Progress
 
 Last updated: March 17, 2026
-Last agent: Claude Code — Sprint 5
-Current sprint: 6
+Last agent: Claude Code — Sprint 7
+Current sprint: 8
 
 ## Sprint Status
 
@@ -12,7 +12,7 @@ Current sprint: 6
 - [x] Sprint 4: Results Dashboard (score gauge, categories, insights render) ✅
 - [x] Sprint 5: What-If Simulator (interactive sliders, projection chart) ✅
 - [ ] Sprint 6: Visual Design Pass (animations, mobile, RTL polish)
-- [ ] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel)
+- [x] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel) ✅
 - [ ] Sprint 8: Growth Features (OCR, accounts, PDF export)
 
 ## Sprint 1 Checklist
@@ -169,10 +169,53 @@ Current sprint: 6
 - `setProfile(parsed)` alongside `setResult(wealthIQResult)` in useEffect
 - New section: `סימולטור ״מה אם?״` with subtitle and `<SimulatorPanel profile={profile} />`
 
-### Still Needs Work (Sprint 6+):
+## Sprint 7 Checklist
 
-- OG share image, 404 page, PDF export
+- [x] `npm run build` passes with zero errors
+- [x] `npm run type-check` passes with zero errors
+- [x] 94/94 tests still pass
+- [x] Root `app/layout.tsx`: full SEO metadata (title template, description, keywords, OG, Twitter card, robots, canonical, `metadataBase`)
+- [x] Root `app/layout.tsx`: JSON-LD WebApplication schema injected via `<script dangerouslySetInnerHTML>`
+- [x] `app/check/layout.tsx`: route-level metadata (`noindex/nofollow`)
+- [x] `app/results/layout.tsx`: route-level metadata with custom OG title for shares
+- [x] `app/api/share/route.ts`: OG image endpoint (1200×630, edge runtime, dark bg, gold gauge, grade badge)
+- [x] `app/not-found.tsx`: Hebrew 404 page with gold heading, two CTAs
+- [x] `app/error.tsx`: root error boundary
+- [x] `app/check/error.tsx`: check route error boundary
+- [x] `app/results/error.tsx`: results route error boundary
+- [x] `app/globals.css`: defined missing CSS classes (`btn-gold`, `btn-outline`, `input-field`, `progress-fill`)
+- [x] `.env.example`: added `NEXT_PUBLIC_BASE_URL`
+- [x] `README.md`: Vercel one-click + CLI deployment instructions
+
+### What was added in Sprint 7:
+
+**`app/api/share/route.ts`** (new)
+- Edge runtime OG image generator (`export const runtime = "edge"`)
+- Uses `React.createElement` (not JSX) to work in `.ts` file
+- 1200×630px dark background, gold borders, WealthIQ branding on left, SVG score gauge on right
+- Score → color mapping, SVG arc via `strokeDashoffset`
+
+**`app/not-found.tsx`** (new)
+- Hebrew 404: "404 — הדף לא נמצא" with gold heading, home + /check CTAs
+
+**`app/error.tsx`**, **`app/check/error.tsx`**, **`app/results/error.tsx`** (new)
+- Per-route error boundaries with `reset()` and route-specific Hebrew copy
+
+**`app/layout.tsx`**
+- Complete `metadata` export with `metadataBase`, title template, OG, Twitter, robots, canonical
+- Inline JSON-LD WebApplication schema
+
+**`app/check/layout.tsx`**, **`app/results/layout.tsx`** (new)
+- Thin layout wrappers with route-level `metadata` export
+
+**`app/globals.css`**
+- Added `.btn-gold`, `.btn-outline`, `.input-field`, `.progress-fill` class definitions
+
+### Still Needs Work (Sprint 8+):
+
+- PDF export
 - Mobile layout polish
+- User accounts / OCR
 
 ## What Exists Already
 
