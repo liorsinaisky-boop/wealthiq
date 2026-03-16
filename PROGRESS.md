@@ -1,13 +1,13 @@
 # WealthIQ Build Progress
 
 Last updated: March 16, 2026
-Last agent: Claude Code
-Current sprint: 2
+Last agent: Claude Code — Sprint 2
+Current sprint: 3
 
 ## Sprint Status
 
 - [x] Sprint 1: Fix & Compile (make it build clean) ✅
-- [ ] Sprint 2: Score Engine Hardening (tests pass, edge cases handled)
+- [x] Sprint 2: Score Engine Hardening (tests pass, edge cases handled) ✅
 - [ ] Sprint 3: Questionnaire Polish (all 9 sections interactive, validated)
 - [ ] Sprint 4: Results Dashboard (score gauge, categories, insights render)
 - [ ] Sprint 5: What-If Simulator (interactive sliders, projection chart)
@@ -37,9 +37,25 @@ Current sprint: 2
 - `components/questionnaire/FieldComponents.tsx` — added missing exports: `NumberField`, `SelectField`, `ToggleGroup`, `SliderField`, `NavButtons`
 - `components/results/NetWorthBreakdown.tsx` — fixed `he.netWorth→he.results.netWorth`, `he.totalAssets→he.results.assets`, `he.totalLiabilities→he.results.liabilities`
 
-### Still Needs Work (Sprint 2+):
-- Unit tests (`npm run test`) — not run yet, vitest config may need fixes
-- Score engine edge cases
+## Sprint 2 Checklist
+
+- [x] `npm run test` — 94/94 tests pass
+- [x] All 6 scoring modules have individual test files
+- [x] Each test file covers: normal case, young starter, near-retirement, zero values, extreme values, grade validity
+- [x] Composite score engine: never returns NaN/Infinity, handles null fees, bonuses/penalties apply correctly, insightsContext has all required fields
+- [x] Fixed existing composite test: `crypto_penalty` → `crypto_heavy` (correct bonus ID)
+
+### What was added in Sprint 2:
+- `__tests__/score-engine/helpers.ts` — shared `makeProfile()` factory + `VALID_GRADES` constant
+- `__tests__/score-engine/retirement-readiness.test.ts` — 12 tests
+- `__tests__/score-engine/financial-stability.test.ts` — 13 tests
+- `__tests__/score-engine/wealth-growth.test.ts` — 11 tests
+- `__tests__/score-engine/risk-management.test.ts` — 12 tests
+- `__tests__/score-engine/fee-efficiency.test.ts` — 16 tests
+- `__tests__/score-engine/goal-alignment.test.ts` — 19 tests
+
+### Still Needs Work (Sprint 3+):
+
 - Questionnaire sections don't have full validation
 - What-if simulator components not yet built
 - OG share image, 404 page, PDF export
