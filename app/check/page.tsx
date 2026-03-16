@@ -29,10 +29,11 @@ const sectionComponents: Record<string, React.FC> = {
   cash_flow: Section9CashFlow,
 };
 
+// RTL: forward = enter from right (start), exit to left (end)
 const slideVariants = {
-  enter: { x: -80, opacity: 0 },
+  enter: { x: 80, opacity: 0 },
   center: { x: 0, opacity: 1 },
-  exit: { x: 80, opacity: 0 },
+  exit: { x: -80, opacity: 0 },
 };
 
 function buildFullProfile(data: Partial<FinancialProfile>): FinancialProfile {
@@ -90,6 +91,8 @@ export default function CheckPage() {
   const progress = ((currentIdx + 1) / totalSteps) * 100;
   const isLastStep = currentIdx === totalSteps - 1;
   const SectionComponent = sectionComponents[currentStep];
+  // Sections 1-3 manage their own Next/Back buttons internally
+  const hasInternalNav = currentStep === "profile" || currentStep === "income" || currentStep === "pension";
 
   const handleSubmit = useCallback(async () => {
     setSubmitting(true);
@@ -169,26 +172,28 @@ export default function CheckPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation */}
-        <div className="mt-8 flex items-center justify-between">
-          <button onClick={prevStep} disabled={currentIdx === 0}
-            className="btn-outline flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed">
-            <ChevronRight className="h-4 w-4" /><span>חזרה</span>
-          </button>
-          <button onClick={handleNext} disabled={isSubmitting}
-            className="btn-gold flex items-center gap-1 disabled:opacity-60">
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <motion.span animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="inline-block h-4 w-4 rounded-full border-2 border-dark-500/30 border-t-dark-500" />
-                מחשב...
-              </span>
-            ) : (
-              <><span>{isLastStep ? "סיום וחישוב ציון ✨" : "הבא"}</span><ChevronLeft className="h-4 w-4" /></>
-            )}
-          </button>
-        </div>
+        {/* Navigation — hidden for sections that have internal nav buttons */}
+        {!hasInternalNav && (
+          <div className="mt-8 flex items-center justify-between">
+            <button onClick={prevStep} disabled={currentIdx === 0}
+              className="btn-outline flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed">
+              <ChevronRight className="h-4 w-4" /><span>חזרה</span>
+            </button>
+            <button onClick={handleNext} disabled={isSubmitting}
+              className="btn-gold flex items-center gap-1 disabled:opacity-60">
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <motion.span animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="inline-block h-4 w-4 rounded-full border-2 border-dark-500/30 border-t-dark-500" />
+                  מחשב...
+                </span>
+              ) : (
+                <><span>{isLastStep ? "סיום וחישוב ציון ✨" : "הבא"}</span><ChevronLeft className="h-4 w-4" /></>
+              )}
+            </button>
+          </div>
+        )}
 
         <p className="mt-8 text-center text-xs text-gray-600">
           מידע כללי בלבד. אינו מהווה ייעוץ פנסיוני או המלצה.

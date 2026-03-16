@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // ── Currency Input (₪) ──────────────────────────────────────
 
@@ -16,7 +18,7 @@ export function CurrencyField({ label, value, onChange, placeholder, hint }: {
         <input type="number" dir="ltr" min={0} step={1000}
           placeholder={placeholder ?? ""} value={value ?? ""}
           onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-          className="input-field pe-8 text-left" />
+          className="input-field pr-8 text-left" />
       </div>
       {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
     </div>
@@ -37,8 +39,8 @@ export function PercentField({ label, value, onChange, placeholder, showDontKnow
           <input type="number" dir="ltr" min={0} max={100} step={0.01}
             placeholder={placeholder ?? ""} value={value === null ? "" : (value ?? "")}
             onChange={(e) => onChange(e.target.value ? parseFloat(e.target.value) : null)}
-            className="input-field text-left" disabled={value === null && showDontKnow} />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+            className="input-field pr-8 text-left" disabled={value === null && showDontKnow} />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
         </div>
         {showDontKnow && (
           <button type="button" onClick={() => onChange(value === null ? 0 : null)}
@@ -117,11 +119,24 @@ export function MicroInsight({ children }: { children: ReactNode }) {
   );
 }
 
-// ── Expandable Sub-section ───────────────────────────────────
+// ── Expandable Sub-section (animated) ────────────────────────
 
 export function Expandable({ show, children }: { show: boolean; children: ReactNode }) {
-  if (!show) return null;
-  return <div className="mt-4 space-y-4 rounded-xl border border-dark-50 bg-dark-300/50 p-4">{children}</div>;
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="overflow-hidden"
+        >
+          <div className="mt-4 space-y-4 rounded-xl border border-dark-50 bg-dark-300/50 p-4">{children}</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
 // ── Number Input ─────────────────────────────────────────────
@@ -136,8 +151,8 @@ export function NumberField({ label, value, onChange, suffix, hint }: {
       <div className="relative">
         <input type="number" dir="ltr" min={0} value={value}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className={`input-field ${suffix ? "pe-8 text-left" : ""}`} />
-        {suffix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{suffix}</span>}
+          className={`input-field ${suffix ? "pr-8 text-left" : ""}`} />
+        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">{suffix}</span>}
       </div>
       {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
     </div>
@@ -224,15 +239,34 @@ export function SliderField({ label, min, max, value, onChange, formatValue, lab
   );
 }
 
-// ── Navigation Buttons ───────────────────────────────────────
+// ── Navigation Buttons (RTL-aware) ───────────────────────────
 
-export function NavButtons({ onNext, onBack }: { onNext: () => void; onBack?: () => void }) {
+export function NavButtons({ onNext, onBack, nextLabel }: {
+  onNext: () => void; onBack?: () => void; nextLabel?: string;
+}) {
   return (
     <div className="mt-6 flex items-center justify-between">
       {onBack ? (
-        <button type="button" onClick={onBack} className="btn-outline text-sm">חזרה</button>
+        <button type="button" onClick={onBack}
+          className="btn-outline flex items-center gap-1 text-sm">
+          <ChevronRight className="h-4 w-4" /><span>חזרה</span>
+        </button>
       ) : <div />}
-      <button type="button" onClick={onNext} className="btn-gold text-sm">הבא ←</button>
+      <button type="button" onClick={onNext}
+        className="btn-gold flex items-center gap-1 text-sm">
+        <span>{nextLabel ?? "הבא"}</span><ChevronLeft className="h-4 w-4" />
+      </button>
     </div>
+  );
+}
+
+// ── Inline Error ─────────────────────────────────────────────
+
+export function FieldError({ message }: { message: string | null }) {
+  if (!message) return null;
+  return (
+    <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+      {message}
+    </p>
   );
 }

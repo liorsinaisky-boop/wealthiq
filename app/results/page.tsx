@@ -9,23 +9,23 @@ import ScoreGauge from "@/components/results/ScoreGauge";
 import CategoryCard from "@/components/results/CategoryCard";
 import InsightCard from "@/components/results/InsightCard";
 import NetWorthChart from "@/components/results/NetWorthChart";
+import LoadingAnalysis from "@/components/results/LoadingAnalysis";
 import Link from "next/link";
 
 type Phase = "loading" | "results";
 
-const LOADING_STEPS = [
-  "מנתח את התמונה הפיננסית שלך...",
-  "מחשב ציון פנסיה ומוכנות לפרישה...",
-  "בודק יעילות עלויות ודמי ניהול...",
-  "מייצר תובנות מותאמות אישית...",
-];
+const categoryGridVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+  },
+};
 
 export default function ResultsPage() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("loading");
   const [result, setResult] = useState<WealthIQResult | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
-  const [loadingStep, setLoadingStep] = useState(0);
 
   useEffect(() => {
     const raw = typeof window !== "undefined" ? sessionStorage.getItem("wealthiq-profile") : null;
@@ -33,16 +33,11 @@ export default function ResultsPage() {
 
     const profile: FinancialProfile = JSON.parse(raw);
 
-    // Animate loading steps
-    const stepTimer = setInterval(() => {
-      setLoadingStep((prev) => Math.min(prev + 1, LOADING_STEPS.length - 1));
-    }, 800);
-
     // Calculate score (instant, deterministic)
     const wealthIQResult = calculateWealthIQ(profile);
     setResult(wealthIQResult);
 
-    // Generate AI insights (async)
+    // Generate AI insights (async, results show after loading animation completes)
     fetch("/api/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -50,49 +45,12 @@ export default function ResultsPage() {
     })
       .then((res) => res.json())
       .then((data) => { if (data.success && data.insights) setInsights(data.insights); })
-      .catch(() => {}); // Fallback insights already in the engine
-
-    // Show results after animation
-    setTimeout(() => {
-      clearInterval(stepTimer);
-      setPhase("results");
-    }, 3500);
-
-    return () => clearInterval(stepTimer);
+      .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   if (phase === "loading") {
-    return (
-      <main className="min-h-screen flex flex-col items-center justify-center px-6">
-        <div className="max-w-md w-full text-center">
-          {/* Animated rings */}
-          <div className="relative w-32 h-32 mx-auto mb-8">
-            <div className="absolute inset-0 border-2 border-gold-400/20 rounded-full animate-ping" />
-            <div className="absolute inset-2 border-2 border-gold-400/40 rounded-full animate-pulse" />
-            <div className="absolute inset-4 border-2 border-gold-400/60 rounded-full" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl">🧠</span>
-            </div>
-          </div>
-
-          {LOADING_STEPS.map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: i <= loadingStep ? 1 : 0.2, y: 0 }}
-              transition={{ delay: i * 0.2 }}
-              className={`flex items-center gap-3 py-2 ${i <= loadingStep ? "text-white" : "text-slate-600"}`}
-            >
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${i < loadingStep ? "bg-gold-400 text-dark-500" : i === loadingStep ? "border-2 border-gold-400 animate-pulse" : "border border-slate-700"}`}>
-                {i < loadingStep ? "✓" : ""}
-              </span>
-              <span className="text-sm">{step}</span>
-            </motion.div>
-          ))}
-        </div>
-      </main>
-    );
+    return <LoadingAnalysis onComplete={() => setPhase("results")} />;
   }
 
   if (!result) return null;
@@ -128,14 +86,19 @@ export default function ResultsPage() {
           </motion.p>
         </section>
 
-        {/* Category scores grid */}
+        {/* Category scores grid — stagger animation via parent variants */}
         <section>
           <h2 className="text-lg font-bold mb-4">ציונים לפי קטגוריה</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {result.categoryScores.map((cat, i) => (
-              <CategoryCard key={cat.category} category={cat} delay={0.1 * i} />
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-3 gap-3"
+            variants={categoryGridVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {result.categoryScores.map((cat) => (
+              <CategoryCard key={cat.category} category={cat} />
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* Net worth */}
