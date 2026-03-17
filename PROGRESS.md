@@ -1,7 +1,7 @@
 # WealthIQ Build Progress
 
 Last updated: March 18, 2026
-Last agent: Claude Code — Sprint 6
+Last agent: Claude Code — Engagement Layer
 Current sprint: 9
 
 ## Sprint Status
@@ -276,6 +276,34 @@ Current sprint: 9
 - Body: DM Sans 400, 15-17px
 - Numbers: JetBrains Mono
 - Section labels: gold, uppercase, 11px, 4px letter-spacing
+
+## Engagement Layer Checklist (Features 1-3)
+
+- [x] `npm run build` ✅ zero errors
+- [x] `npm run test` ✅ 94/94 tests pass
+
+### Feature 1: Financial Advisor Chatbot
+- [x] `lib/types/index.ts` — added ChatMessage, ChatRequest, ChatResponse, DeepInsight, DeepInsightCategory types
+- [x] `lib/ai/system-prompts.ts` — added SYSTEM_PROMPT_CHAT (Hebrew, educational, no hallucination rules)
+- [x] `app/api/chat/route.ts` — POST /api/chat using Gemini 2.5 Flash, injects financial context, responseMimeType JSON, last-10-messages history, graceful fallback
+- [x] `lib/store/chat-store.ts` — Zustand store: messages, isOpen, isLoading, suggestedQuestions, context; sendMessage calls API; initial 3 Hebrew suggested questions
+- [x] `components/chat/ChatButton.tsx` — FAB fixed bottom-right, gold circle, chat↔X icon rotation, pulse ring on first load (3 cycles then stops)
+- [x] `components/chat/ChatPanel.tsx` — slide-up panel 380×500px, header, scrollable messages with user/assistant bubbles, typing dots, suggested questions pills, input+send; keyboard Enter sends; auto-scroll to bottom
+
+### Feature 2: Deep Insights Engine
+- [x] `lib/score-engine/deep-insights.ts` — DETERMINISTIC TypeScript only; benchmarks for 5 age brackets; percentile formula from spec; template-based analysis + actions for all 6 categories; related metrics with trend indicators
+- [x] `components/results/BenchmarkBar.tsx` — 6px track, animated fill to user score, "ממוצע" marker, gold dot at user position
+- [x] `components/results/DeepInsightCard.tsx` — expandable card; header: dot + Sora title + JetBrains Mono score + benchmark pill; body: BenchmarkBar + percentile stats + analysis + numbered actions + metric pills
+- [x] `components/results/DeepInsightsSection.tsx` — "ניתוח עמוק" section, 2-col grid with staggered ScrollReveal
+- [x] `app/results/page.tsx` — integrated DeepInsightsSection between AI insights and simulator
+
+### Feature 3: Micro-interactions
+- [x] `components/ui/ScrollReveal.tsx` — Framer Motion useInView, directions: up/left/right, configurable delay/duration, once only
+- [x] `app/page.tsx` — ScrollReveal on HOW/SCORING/FEATURES/CTA sections; cards staggered 80-100ms
+- [x] `app/check/page.tsx` — AnimatePresence milestone banners: gold on investments step, green on insurance step
+- [x] `components/results/CategoryCard.tsx` — whileHover: y:-4px (lift) + border tints with category color
+- [x] `components/results/InsightCard.tsx` — thumbs up/down feedback row (local state, cosmetic only)
+- [x] `app/results/page.tsx` — 2px gold scroll progress bar fixed at top; keyboard shortcuts: 'C' toggles chat, Escape closes; header hint "לחץ/י C לפתיחת יועץ AI"
 
 ### Still Needs Work (Sprint 9+):
 

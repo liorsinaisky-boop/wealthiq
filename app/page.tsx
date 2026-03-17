@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
 // ── Demo ring constants ───────────────────────────────────────
 const DEMO_SCORE = 78;
@@ -235,17 +236,20 @@ export default function LandingPage() {
       {/* ── HOW IT WORKS ────────────────────────────────────── */}
       <section id="how" className="px-6 py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <span className="section-label mb-4 inline-block">תהליך</span>
-            <h2
-              className="font-sora font-bold text-4xl"
-              style={{ letterSpacing: "-1.5px" }}
-            >
-              איך זה עובד?
-            </h2>
-          </div>
+          <ScrollReveal direction="up" delay={0}>
+            <div className="mb-16 text-center">
+              <span className="section-label mb-4 inline-block">תהליך</span>
+              <h2
+                className="font-sora font-bold text-4xl"
+                style={{ letterSpacing: "-1.5px" }}
+              >
+                איך זה עובד?
+              </h2>
+            </div>
+          </ScrollReveal>
           <div className="grid gap-5 md:grid-cols-3">
-            {HOW_IT_WORKS.map((step) => (
+            {HOW_IT_WORKS.map((step, i) => (
+              <ScrollReveal key={step.num} direction="up" delay={i * 100}>
               <div
                 key={step.num}
                 className="card relative p-8 transition-colors duration-300 hover:border-[rgba(200,162,78,0.18)]"
@@ -274,6 +278,7 @@ export default function LandingPage() {
                   {step.desc}
                 </p>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -288,6 +293,7 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-6xl items-start gap-16 md:grid-cols-2">
 
           {/* Left: explanation + category list */}
+          <ScrollReveal direction="right" delay={0}>
           <div>
             <span className="section-label mb-4 inline-block">מנוע הניקוד</span>
             <h2
@@ -319,7 +325,10 @@ export default function LandingPage() {
             </div>
           </div>
 
+          </ScrollReveal>
+
           {/* Right: demo score card */}
+          <ScrollReveal direction="left" delay={100}>
           <div
             className="card p-8"
             style={{ borderColor: "rgba(200,162,78,0.12)" }}
@@ -374,6 +383,7 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -394,7 +404,8 @@ export default function LandingPage() {
             </h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            {FEATURES.map((feat) => (
+            {FEATURES.map((feat, i) => (
+              <ScrollReveal key={feat.num} direction="up" delay={i * 80}>
               <div
                 key={feat.num}
                 className="card p-7 transition-all duration-300 hover:border-[rgba(200,162,78,0.2)] hover:bg-[rgba(255,255,255,0.04)]"
@@ -410,6 +421,7 @@ export default function LandingPage() {
                   {feat.desc}
                 </p>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -431,6 +443,7 @@ export default function LandingPage() {
             filter: "blur(40px)",
           }}
         />
+        <ScrollReveal direction="up" delay={0}>
         <div className="relative">
           <span className="section-label mb-4 inline-block">מוכן/ה?</span>
           <h2
@@ -450,6 +463,7 @@ export default function LandingPage() {
             התחל עכשיו ←
           </Link>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* ── FOOTER ──────────────────────────────────────────── */}

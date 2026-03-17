@@ -592,3 +592,60 @@ export interface QuestionnaireState {
   isSubmitting: boolean;
   error: string | null;
 }
+
+// ────────────────────────────────────────────────────────────
+// Chat Types
+// ────────────────────────────────────────────────────────────
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: number;
+}
+
+export interface ChatRequest {
+  message: string;
+  context: {
+    profile: FinancialProfile;
+    result: WealthIQResult;
+    insights: Insight[];
+  };
+  history: ChatMessage[];
+}
+
+export interface ChatResponse {
+  reply: string;
+  suggestedQuestions?: string[];
+}
+
+// ────────────────────────────────────────────────────────────
+// Deep Insight Types
+// ────────────────────────────────────────────────────────────
+
+export type DeepInsightCategory =
+  | "retirement"
+  | "stability"
+  | "growth"
+  | "risk"
+  | "fees"
+  | "goals";
+
+export interface DeepInsight {
+  id: string;
+  title: string;
+  category: DeepInsightCategory;
+  score: number;
+  grade: string;
+  benchmark: {
+    average: number;
+    percentile: number;
+    label: string; // "Top 20%", "Above average", etc.
+  };
+  analysis: string;     // 3-5 sentences
+  actions: string[];    // 2-3 specific steps
+  relatedMetrics: {
+    label: string;
+    value: string;
+    trend: "positive" | "negative" | "neutral";
+  }[];
+}

@@ -1,5 +1,7 @@
 "use client";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 import type { Insight } from "@/lib/types";
 
 const IMPACT_CONFIG = {
@@ -10,6 +12,7 @@ const IMPACT_CONFIG = {
 
 export default function InsightCard({ insight, delay = 0 }: { insight: Insight; delay?: number }) {
   const cfg = IMPACT_CONFIG[insight.impact];
+  const [vote, setVote] = useState<"up" | "down" | null>(null);
 
   return (
     <motion.div
@@ -49,6 +52,31 @@ export default function InsightCard({ insight, delay = 0 }: { insight: Insight; 
                 {insight.estimatedScoreImpact}
               </p>
             )}
+
+            {/* Thumbs feedback — cosmetic only */}
+            <div className="mt-3 flex items-center gap-2">
+              <span className="text-xs" style={{ color: "#5A5650" }}>
+                {vote ? (vote === "up" ? "תודה! 👍" : "הבנו, נשפר.") : "האם זה שימושי?"}
+              </span>
+              {!vote && (
+                <>
+                  <button
+                    onClick={() => setVote("up")}
+                    className="rounded-md p-1 transition-colors hover:bg-white/5"
+                    aria-label="כן, שימושי"
+                  >
+                    <ThumbsUp className="h-3.5 w-3.5" style={{ color: "#5A5650" }} />
+                  </button>
+                  <button
+                    onClick={() => setVote("down")}
+                    className="rounded-md p-1 transition-colors hover:bg-white/5"
+                    aria-label="לא שימושי"
+                  >
+                    <ThumbsDown className="h-3.5 w-3.5" style={{ color: "#5A5650" }} />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

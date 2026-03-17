@@ -187,6 +187,40 @@ export default function CheckPage() {
           </div>
         </div>
 
+        {/* Milestone banners */}
+        <AnimatePresence>
+          {currentStep === "investments" && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mb-5 rounded-xl border px-4 py-3 text-sm"
+              style={{
+                backgroundColor: "rgba(200,162,78,0.06)",
+                borderColor: "rgba(200,162,78,0.2)",
+                color: "#C8A24E",
+              }}
+            >
+              🎯 כמעט באמצע! עוד 4 קטגוריות לסיום.
+            </motion.div>
+          )}
+          {currentStep === "insurance" && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mb-5 rounded-xl border px-4 py-3 text-sm"
+              style={{
+                backgroundColor: "rgba(52,211,153,0.06)",
+                borderColor: "rgba(52,211,153,0.2)",
+                color: "#34D399",
+              }}
+            >
+              ✨ כמעט סיימת — עוד קטגוריה אחת בלבד!
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Error */}
         {error && (
           <div

@@ -25,12 +25,13 @@ export default function CategoryCard({ category }: { category: CategoryScore }) 
   return (
     <motion.div
       variants={cardVariants}
-      className="card p-5 transition-all duration-300"
-      style={{
-        borderColor: "rgba(255,255,255,0.06)",
-        // hover handled via Tailwind pseudo - but since we're using inline style, add onHover via CSS class
+      className="card p-5 cursor-pointer"
+      style={{ borderColor: "rgba(255,255,255,0.06)" }}
+      whileHover={{
+        y: -4,
+        borderColor: `${catColor}26`,
+        transition: { duration: 0.2 },
       }}
-      whileHover={{ borderColor: `${catColor}26` }}
     >
       {/* Header row */}
       <div className="mb-3 flex items-start justify-between">
