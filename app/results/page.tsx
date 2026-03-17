@@ -36,11 +36,9 @@ export default function ResultsPage() {
     const parsed: FinancialProfile = JSON.parse(raw);
     setProfile(parsed);
 
-    // Calculate score (instant, deterministic)
     const wealthIQResult = calculateWealthIQ(parsed);
     setResult(wealthIQResult);
 
-    // Generate AI insights (async)
     fetch("/api/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -59,41 +57,64 @@ export default function ResultsPage() {
   if (!result || !profile) return null;
 
   return (
-    <main className="min-h-screen pb-20">
+    <main className="min-h-screen pb-20" style={{ backgroundColor: "#06080C" }}>
       {/* Header */}
-      <header className="bg-dark-500/80 backdrop-blur-md border-b border-dark-border/30 px-6 py-4 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/" className="text-gold-400 font-bold text-lg">WealthIQ</Link>
-          <Link href="/check" className="text-sm text-slate-400 hover:text-white transition-colors">בדיקה חדשה</Link>
+      <header
+        className="sticky top-0 z-50 px-6 py-4"
+        style={{
+          backgroundColor: "rgba(6,8,12,0.88)",
+          backdropFilter: "blur(16px)",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+        }}
+      >
+        <div className="mx-auto flex max-w-4xl items-center justify-between">
+          <Link href="/" className="font-sora font-semibold text-lg" style={{ color: "#C8A24E" }}>
+            WealthIQ
+          </Link>
+          <Link
+            href="/check"
+            className="text-sm transition-colors"
+            style={{ color: "#8A8680" }}
+          >
+            בדיקה חדשה
+          </Link>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 pt-10 space-y-10">
-        {/* Score */}
+      <div className="mx-auto max-w-4xl space-y-10 px-6 pt-10">
+
+        {/* Score section */}
         <section className="text-center">
-          <motion.h1
+          <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-xl text-slate-400 mb-6"
+            className="mb-6 text-sm uppercase tracking-[3px]"
+            style={{ color: "#8A8680" }}
           >
             הציון הפיננסי שלך
-          </motion.h1>
+          </motion.p>
           <ScoreGauge score={result.totalScore} />
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2 }}
-            className="text-slate-400 mt-4"
+            className="mt-4 text-sm"
+            style={{ color: "#8A8680" }}
           >
-            את/ה ב<span className="text-gold-400 font-bold">טופ {100 - result.percentileEstimate}%</span> לגיל שלך
+            את/ה ב<span className="font-semibold" style={{ color: "#C8A24E" }}>טופ {100 - result.percentileEstimate}%</span> לגיל שלך
           </motion.p>
         </section>
 
-        {/* Category scores grid — stagger animation via parent variants */}
+        {/* Category grid */}
         <section>
-          <h2 className="text-lg font-bold mb-4">ציונים לפי קטגוריה</h2>
+          <h2
+            className="mb-4 font-sora font-semibold text-lg"
+            style={{ letterSpacing: "-0.5px" }}
+          >
+            ציונים לפי קטגוריה
+          </h2>
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 gap-3"
+            className="grid grid-cols-2 gap-3 md:grid-cols-3"
             variants={categoryGridVariants}
             initial="hidden"
             animate="visible"
@@ -104,44 +125,65 @@ export default function ResultsPage() {
           </motion.div>
         </section>
 
-        {/* Net worth */}
+        {/* Net worth chart */}
         <section>
           <NetWorthChart netWorth={result.netWorth} />
         </section>
 
         {/* AI Insights */}
         <section>
-          <h2 className="text-lg font-bold mb-4">
-            🧠 תובנות מותאמות אישית
+          <h2
+            className="mb-4 font-sora font-semibold text-lg"
+            style={{ letterSpacing: "-0.5px" }}
+          >
+            תובנות מותאמות אישית
           </h2>
           <div className="space-y-3">
             {insights.length > 0
               ? insights.map((insight, i) => (
                   <InsightCard key={insight.id} insight={insight} delay={0.1 * i} />
                 ))
-              : <p className="text-slate-400 text-sm">מייצר תובנות...</p>
+              : (
+                <p className="text-sm" style={{ color: "#5A5650" }}>מייצר תובנות...</p>
+              )
             }
           </div>
         </section>
 
         {/* What-If Simulator */}
         <section>
-          <h2 className="text-lg font-bold mb-1">סימולטור ״מה אם?״</h2>
-          <p className="text-sm text-slate-500 mb-4">הזז את המחוונים וראה איך החלטות שונות משפיעות על העתיד הפיננסי שלך</p>
+          <h2 className="mb-1 font-sora font-semibold text-lg" style={{ letterSpacing: "-0.5px" }}>
+            סימולטור ״מה אם?״
+          </h2>
+          <p className="mb-5 text-sm" style={{ color: "#8A8680" }}>
+            הזז את המחוונים וראה איך החלטות שונות משפיעות על העתיד הפיננסי שלך
+          </p>
           <SimulatorPanel profile={profile} />
         </section>
 
         {/* Bonuses & Penalties */}
         {result.bonusesPenalties.some(b => b.applied) && (
           <section>
-            <h2 className="text-lg font-bold mb-4">בונוסים וקנסות</h2>
+            <h2 className="mb-4 font-sora font-semibold text-lg" style={{ letterSpacing: "-0.5px" }}>
+              בונוסים וקנסות
+            </h2>
             <div className="space-y-2">
               {result.bonusesPenalties.filter(b => b.applied).map((bp) => (
-                <div key={bp.id} className={`flex items-center gap-3 p-3 rounded-xl ${bp.points > 0 ? "bg-green-500/10 border border-green-500/20" : "bg-red-500/10 border border-red-500/20"}`}>
-                  <span className={`text-sm font-bold ${bp.points > 0 ? "text-green-400" : "text-red-400"}`}>
+                <div
+                  key={bp.id}
+                  className="flex items-center gap-3 rounded-xl border p-3"
+                  style={{
+                    backgroundColor: bp.points > 0 ? "rgba(52,211,153,0.05)" : "rgba(239,68,68,0.05)",
+                    borderColor: bp.points > 0 ? "rgba(52,211,153,0.15)" : "rgba(239,68,68,0.15)",
+                  }}
+                >
+                  <span
+                    className="font-jetbrains-mono text-sm font-bold"
+                    style={{ color: bp.points > 0 ? "#34D399" : "#EF4444" }}
+                  >
                     {bp.points > 0 ? `+${bp.points}` : bp.points}
                   </span>
-                  <span className="text-sm">{bp.descriptionHe}</span>
+                  <span className="text-sm" style={{ color: "#E8E4DC" }}>{bp.descriptionHe}</span>
                 </div>
               ))}
             </div>
@@ -149,8 +191,8 @@ export default function ResultsPage() {
         )}
 
         {/* Disclaimer */}
-        <footer className="pt-8 border-t border-dark-border/20">
-          <p className="text-slate-500 text-xs text-center leading-relaxed">
+        <footer className="pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+          <p className="text-center text-xs leading-relaxed" style={{ color: "#5A5650" }}>
             {result.disclaimer}
           </p>
         </footer>

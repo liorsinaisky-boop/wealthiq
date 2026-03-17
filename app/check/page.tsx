@@ -18,22 +18,22 @@ import Section9CashFlow from "@/components/questionnaire/Section9CashFlow";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const sectionComponents: Record<string, React.FC> = {
-  profile: Section1Profile,
-  income: Section2Income,
-  pension: Section3Pension,
+  profile:     Section1Profile,
+  income:      Section2Income,
+  pension:     Section3Pension,
   real_estate: Section4RealEstate,
   investments: Section5Investments,
-  savings: Section6Savings,
-  debt: Section7Debt,
-  insurance: Section8Insurance,
-  cash_flow: Section9CashFlow,
+  savings:     Section6Savings,
+  debt:        Section7Debt,
+  insurance:   Section8Insurance,
+  cash_flow:   Section9CashFlow,
 };
 
 // RTL: forward = enter from right (start), exit to left (end)
 const slideVariants = {
-  enter: { x: 80, opacity: 0 },
-  center: { x: 0, opacity: 1 },
-  exit: { x: -80, opacity: 0 },
+  enter:  { x: 80, opacity: 0 },
+  center: { x: 0,  opacity: 1 },
+  exit:   { x: -80, opacity: 0 },
 };
 
 function buildFullProfile(data: Partial<FinancialProfile>): FinancialProfile {
@@ -86,13 +86,12 @@ export default function CheckPage() {
     markComplete, setSubmitting, setError, isSubmitting, error,
   } = useQuestionnaireStore();
 
-  const currentIdx = QUESTIONNAIRE_STEPS.indexOf(currentStep);
-  const totalSteps = QUESTIONNAIRE_STEPS.length;
-  const progress = ((currentIdx + 1) / totalSteps) * 100;
-  const isLastStep = currentIdx === totalSteps - 1;
+  const currentIdx  = QUESTIONNAIRE_STEPS.indexOf(currentStep);
+  const totalSteps  = QUESTIONNAIRE_STEPS.length;
+  const progress    = ((currentIdx + 1) / totalSteps) * 100;
+  const isLastStep  = currentIdx === totalSteps - 1;
   const SectionComponent = sectionComponents[currentStep];
-  // Sections 1-3 manage their own Next/Back buttons internally
-  const hasInternalNav = currentStep === "profile" || currentStep === "income" || currentStep === "pension";
+  const hasInternalNav   = currentStep === "profile" || currentStep === "income" || currentStep === "pension";
 
   const handleSubmit = useCallback(async () => {
     setSubmitting(true);
@@ -122,80 +121,137 @@ export default function CheckPage() {
   }, [currentStep, isLastStep, markComplete, nextStep, handleSubmit]);
 
   return (
-    <main className="min-h-screen px-4 py-8">
+    <main className="min-h-screen px-4 py-8" style={{ backgroundColor: "#06080C" }}>
       <div className="mx-auto max-w-2xl">
+
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-2xl font-bold">
-            <span className="text-gold-gradient">WealthIQ</span> Check
+          <h1 className="mb-2 font-sora text-2xl font-bold">
+            <span className="gold-text">WealthIQ</span>
+            <span style={{ color: "#E8E4DC" }}> Check</span>
           </h1>
-          <p className="text-sm text-gray-400">ענה/י על השאלות — הכל נשאר אצלך, לא שומרים כלום</p>
+          <p className="text-sm" style={{ color: "#8A8680" }}>
+            ענה/י על השאלות — הכל נשאר אצלך, לא שומרים כלום
+          </p>
         </div>
 
         {/* Progress */}
         <div className="mb-8">
           <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="text-gray-400">{STEP_ICONS[currentStep]} {STEP_NAMES_HE[currentStep]}</span>
-            <span className="text-gray-500">{currentIdx + 1} / {totalSteps}</span>
+            <span style={{ color: "#8A8680" }}>
+              {STEP_ICONS[currentStep]} {STEP_NAMES_HE[currentStep]}
+            </span>
+            <span className="font-jetbrains-mono text-xs" style={{ color: "#5A5650" }}>
+              {currentIdx + 1} / {totalSteps}
+            </span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-dark-200">
-            <motion.div className="progress-fill h-full rounded-full"
-              initial={{ width: 0 }} animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.5, ease: "easeOut" }} />
+
+          {/* Progress bar — 3px, gold fill, RTL */}
+          <div
+            className="h-[3px] w-full overflow-hidden rounded-full"
+            style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+          >
+            <motion.div
+              className="progress-fill h-full rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            />
           </div>
+
+          {/* Step dots */}
           <div className="mt-3 flex justify-between">
             {QUESTIONNAIRE_STEPS.map((step, i) => (
-              <button key={step}
+              <button
+                key={step}
                 onClick={() => (completedSteps.includes(step) || i <= currentIdx) && setStep(step)}
-                className={`h-2.5 w-2.5 rounded-full transition-all ${
-                  step === currentStep ? "bg-gold-400 scale-125"
-                    : completedSteps.includes(step) ? "bg-gold-400/50 cursor-pointer hover:bg-gold-400"
-                    : i < currentIdx ? "bg-gold-400/30 cursor-pointer" : "bg-dark-50"
-                }`} title={STEP_NAMES_HE[step]} />
+                className="rounded-full transition-all duration-200"
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  backgroundColor:
+                    step === currentStep
+                      ? "#C8A24E"
+                      : completedSteps.includes(step)
+                      ? "rgba(200,162,78,0.45)"
+                      : i < currentIdx
+                      ? "rgba(200,162,78,0.25)"
+                      : "rgba(255,255,255,0.08)",
+                  transform: step === currentStep ? "scale(1.3)" : "scale(1)",
+                  cursor: completedSteps.includes(step) || i <= currentIdx ? "pointer" : "default",
+                  boxShadow: step === currentStep ? "0 0 8px rgba(200,162,78,0.5)" : "none",
+                }}
+                title={STEP_NAMES_HE[step]}
+              />
             ))}
           </div>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <div
+            className="mb-6 rounded-xl border px-4 py-3 text-sm"
+            style={{
+              backgroundColor: "rgba(239,68,68,0.06)",
+              borderColor: "rgba(239,68,68,0.25)",
+              color: "#EF4444",
+            }}
+          >
             {error}
           </div>
         )}
 
         {/* Section */}
         <AnimatePresence mode="wait">
-          <motion.div key={currentStep} variants={slideVariants}
-            initial="enter" animate="center" exit="exit"
-            transition={{ duration: 0.25, ease: "easeInOut" }}>
+          <motion.div
+            key={currentStep}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
             {SectionComponent && <SectionComponent />}
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation — hidden for sections that have internal nav buttons */}
+        {/* Navigation — hidden for sections that manage their own nav */}
         {!hasInternalNav && (
           <div className="mt-8 flex items-center justify-between">
-            <button onClick={prevStep} disabled={currentIdx === 0}
-              className="btn-outline flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed">
-              <ChevronRight className="h-4 w-4" /><span>חזרה</span>
+            <button
+              onClick={prevStep}
+              disabled={currentIdx === 0}
+              className="btn-outline flex items-center gap-1.5 disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              <ChevronRight className="h-4 w-4" />
+              <span>חזרה</span>
             </button>
-            <button onClick={handleNext} disabled={isSubmitting}
-              className="btn-gold flex items-center gap-1 disabled:opacity-60">
+            <button
+              onClick={handleNext}
+              disabled={isSubmitting}
+              className="btn-gold flex items-center gap-1.5 disabled:opacity-60"
+            >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
-                  <motion.span animate={{ rotate: 360 }}
+                  <motion.span
+                    animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="inline-block h-4 w-4 rounded-full border-2 border-dark-500/30 border-t-dark-500" />
+                    className="inline-block h-4 w-4 rounded-full border-2"
+                    style={{ borderColor: "rgba(6,8,12,0.3)", borderTopColor: "#06080C" }}
+                  />
                   מחשב...
                 </span>
               ) : (
-                <><span>{isLastStep ? "סיום וחישוב ציון ✨" : "הבא"}</span><ChevronLeft className="h-4 w-4" /></>
+                <>
+                  <span>{isLastStep ? "סיום וחישוב ציון ✨" : "הבא"}</span>
+                  <ChevronLeft className="h-4 w-4" />
+                </>
               )}
             </button>
           </div>
         )}
 
-        <p className="mt-8 text-center text-xs text-gray-600">
+        <p className="mt-8 text-center text-xs" style={{ color: "#3D3A38" }}>
           מידע כללי בלבד. אינו מהווה ייעוץ פנסיוני או המלצה.
         </p>
       </div>

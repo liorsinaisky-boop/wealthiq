@@ -22,44 +22,68 @@ export default function LoadingAnalysis({ onComplete }: { onComplete: () => void
       }, (i + 1) * 1000)
     );
     return () => timers.forEach(clearTimeout);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6">
-      <div className="max-w-md w-full text-center">
-        {/* Animated rings */}
-        <div className="relative w-32 h-32 mx-auto mb-10">
-          <div className="absolute inset-0 border-2 border-gold-400/20 rounded-full animate-ping" />
-          <div className="absolute inset-2 border-2 border-gold-400/40 rounded-full animate-pulse" />
-          <div className="absolute inset-4 border-2 border-gold-400/60 rounded-full" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl">🧠</span>
+    <main
+      className="flex min-h-screen flex-col items-center justify-center px-6"
+      style={{ backgroundColor: "#06080C" }}
+    >
+      <div className="w-full max-w-sm text-center">
+        {/* Gold pulsing ring indicator */}
+        <div className="relative mx-auto mb-10 h-28 w-28">
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{ border: "1px solid rgba(200,162,78,0.15)" }}
+            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.15, 0.4] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute inset-3 rounded-full"
+            style={{ border: "1px solid rgba(200,162,78,0.3)" }}
+            animate={{ scale: [1, 1.1, 1], opacity: [0.6, 0.3, 0.6] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+          />
+          <div
+            className="absolute inset-5 rounded-full flex items-center justify-center"
+            style={{ border: "1px solid rgba(200,162,78,0.5)" }}
+          >
+            <motion.div
+              className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: "#C8A24E" }}
+              animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+            />
           </div>
         </div>
 
+        {/* Steps */}
         <div className="space-y-5 text-start">
           {STEPS.map((step, i) => {
             const isCompleted = completedCount > i;
-            const isActive = completedCount === i;
+            const isActive    = completedCount === i;
 
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.15, duration: 0.3 }}
                 className="flex items-center gap-4"
               >
-                {/* Step indicator */}
+                {/* Indicator circle */}
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                    isCompleted
-                      ? "bg-gold-400"
+                  className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300"
+                  style={{
+                    backgroundColor: isCompleted ? "#C8A24E" : "transparent",
+                    border: isCompleted
+                      ? "none"
                       : isActive
-                      ? "border-2 border-gold-400 animate-pulse"
-                      : "border border-dark-50"
-                  }`}
+                      ? "2px solid #C8A24E"
+                      : "1px solid rgba(255,255,255,0.1)",
+                    boxShadow: isActive ? "0 0 12px rgba(200,162,78,0.35)" : "none",
+                  }}
                 >
                   <AnimatePresence>
                     {isCompleted && (
@@ -68,23 +92,30 @@ export default function LoadingAnalysis({ onComplete }: { onComplete: () => void
                         animate={{ scale: 1, rotate: 0 }}
                         exit={{ scale: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                        className="text-dark-500 text-sm font-black leading-none"
+                        className="text-sm font-black leading-none"
+                        style={{ color: "#06080C" }}
                       >
                         ✓
                       </motion.span>
                     )}
+                    {isActive && !isCompleted && (
+                      <motion.div
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: "#C8A24E" }}
+                        animate={{ scale: [1, 1.3, 1] }}
+                        transition={{ duration: 0.8, repeat: Infinity }}
+                      />
+                    )}
                   </AnimatePresence>
                 </div>
 
-                {/* Step label */}
+                {/* Label */}
                 <span
-                  className={`text-sm transition-colors duration-300 ${
-                    isCompleted
-                      ? "text-white font-medium"
-                      : isActive
-                      ? "text-gold-300"
-                      : "text-slate-600"
-                  }`}
+                  className="text-sm transition-colors duration-300"
+                  style={{
+                    color: isCompleted ? "#E8E4DC" : isActive ? "#C8A24E" : "#5A5650",
+                    fontWeight: isCompleted ? 500 : 400,
+                  }}
                 >
                   {step}
                 </span>

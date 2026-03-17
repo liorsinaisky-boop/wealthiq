@@ -2,28 +2,54 @@
 import { motion } from "framer-motion";
 import type { Insight } from "@/lib/types";
 
-const IMPACT_COLORS = { high: "border-red-500/30 bg-red-500/5", medium: "border-yellow-500/30 bg-yellow-500/5", low: "border-green-500/30 bg-green-500/5" };
-const IMPACT_LABELS = { high: "השפעה גבוהה", medium: "השפעה בינונית", low: "השפעה נמוכה" };
+const IMPACT_CONFIG = {
+  high:   { borderColor: "#EF4444", bgColor: "rgba(239,68,68,0.05)",  badgeBg: "rgba(239,68,68,0.12)",  badgeColor: "#EF4444", label: "השפעה גבוהה" },
+  medium: { borderColor: "#C8A24E", bgColor: "rgba(200,162,78,0.04)", badgeBg: "rgba(200,162,78,0.12)", badgeColor: "#C8A24E", label: "השפעה בינונית" },
+  low:    { borderColor: "#34D399", bgColor: "rgba(52,211,153,0.04)", badgeBg: "rgba(52,211,153,0.12)", badgeColor: "#34D399", label: "השפעה נמוכה" },
+};
 
 export default function InsightCard({ insight, delay = 0 }: { insight: Insight; delay?: number }) {
+  const cfg = IMPACT_CONFIG[insight.impact];
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.4 }}
-      className={`p-5 rounded-xl border ${IMPACT_COLORS[insight.impact]}`}
+      className="overflow-hidden rounded-2xl"
+      style={{
+        backgroundColor: cfg.bgColor,
+        border: `1px solid rgba(255,255,255,0.06)`,
+        borderRight: `4px solid ${cfg.borderColor}`,
+      }}
     >
-      <div className="flex items-start gap-3">
-        <span className="text-2xl flex-shrink-0">{insight.icon}</span>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h4 className="font-bold text-sm">{insight.titleHe}</h4>
-            <span className="text-[10px] px-2 py-0.5 rounded-full border border-current opacity-60">
-              {IMPACT_LABELS[insight.impact]}
-            </span>
+      <div className="p-5">
+        <div className="flex items-start gap-3">
+          <span className="flex-shrink-0 text-2xl">{insight.icon}</span>
+          <div className="min-w-0 flex-1">
+            {/* Title + badge */}
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h4 className="font-sora text-[16px] font-semibold leading-snug" style={{ color: "#E8E4DC" }}>
+                {insight.titleHe}
+              </h4>
+              <span
+                className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider"
+                style={{ backgroundColor: cfg.badgeBg, color: cfg.badgeColor }}
+              >
+                {cfg.label}
+              </span>
+            </div>
+            {/* Body */}
+            <p className="text-sm leading-relaxed" style={{ color: "#8A8680" }}>
+              {insight.bodyHe}
+            </p>
+            {/* Score impact */}
+            {insight.estimatedScoreImpact && (
+              <p className="mt-2 text-xs" style={{ color: "rgba(200,162,78,0.6)" }}>
+                {insight.estimatedScoreImpact}
+              </p>
+            )}
           </div>
-          <p className="text-sm text-slate-300 leading-relaxed">{insight.bodyHe}</p>
-          <p className="text-xs text-gold-400/60 mt-2">{insight.estimatedScoreImpact}</p>
         </div>
       </div>
     </motion.div>

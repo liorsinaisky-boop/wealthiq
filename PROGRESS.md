@@ -1,7 +1,7 @@
 # WealthIQ Build Progress
 
-Last updated: March 17, 2026
-Last agent: Claude Code — Sprint 8
+Last updated: March 18, 2026
+Last agent: Claude Code — Sprint 6
 Current sprint: 9
 
 ## Sprint Status
@@ -11,7 +11,7 @@ Current sprint: 9
 - [x] Sprint 3: Questionnaire Polish (all 9 sections interactive, validated) ✅
 - [x] Sprint 4: Results Dashboard (score gauge, categories, insights render) ✅
 - [x] Sprint 5: What-If Simulator (interactive sliders, projection chart) ✅
-- [ ] Sprint 6: Visual Design Pass (animations, mobile, RTL polish)
+- [x] Sprint 6: Visual Design Pass — Luminous Observatory theme ✅
 - [x] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel) ✅
 - [x] Sprint 8: Null safety + vehicle + expense breakdown ✅
 - [ ] Sprint 9: Growth Features (OCR, accounts, PDF export)
@@ -251,6 +251,31 @@ Current sprint: 9
 - [x] `lib/types/index.ts` — `InsightsContext` extended with `monthlyCarPayment?` and `expenseBreakdown?`
 - [x] `components/questionnaire/Section9CashFlow.tsx` — breakdown toggle (local state), all 9 category inputs, auto-sum, >20% mismatch warning with "update" button, housing pre-fill from mortgage
 - [x] `lib/score-engine/composite.ts` — `expenseBreakdown` passed through to `InsightsContext` for AI
+
+## Sprint 6 Checklist
+
+- [x] `npm run build` ✅ zero errors
+- [x] `npm run test` ✅ 94/94 tests pass
+- [x] `app/globals.css` — full redesign: Sora/DM Sans/JetBrains Mono import, new CSS variables (#06080C bg, #E8E4DC text, #C8A24E gold), updated card/button/input/progress styles
+- [x] `tailwind.config.ts` — added `font-sora`, `font-dm-sans`, `font-jetbrains-mono`; updated gold palette (400=#C8A24E), dark palette (500=#06080C)
+- [x] `app/layout.tsx` — body uses `font-dm-sans`, warm text color
+- [x] `app/page.tsx` — complete rewrite: fixed nav (scroll blur), 2-col hero with animated SVG score ring + floating pills + stat counters, "how it works" 3-card with ghost numbers, scoring engine 2-col (category list + demo score card with progress bars), features 3×2 grid, CTA with radial glow, footer
+- [x] `app/check/page.tsx` — dark bg, 3px gold progress bar, gold step dots with glow, Sora headings, new error/nav styling, JetBrains Mono counters
+- [x] `app/results/page.tsx` — dark header (blur+border), Sora headings, muted text, warm gold accents, styled bonus/penalty cards
+- [x] `components/results/ScoreGauge.tsx` — Sora score font, "הציון שלך" uppercase label, dark track, gold glow arc
+- [x] `components/results/CategoryCard.tsx` — category-specific color dots, JetBrains Mono score, 3px progress bar, hover border color
+- [x] `components/results/InsightCard.tsx` — 4px right border in impact color, Sora title, pill badge, DM Sans body
+- [x] `components/results/LoadingAnalysis.tsx` — gold pulsing ring indicator (no emoji), animated inner dot, gold checkmarks, smooth step transitions
+
+### Design tokens applied:
+- Background: #06080C (warm near-black)
+- Text: #E8E4DC (warm white), muted: #8A8680, dim: #5A5650
+- Gold: #C8A24E (warm gold), light: #E0BA72
+- Cards: rgba(255,255,255,0.03) bg, rgba(255,255,255,0.06) border, 16px radius
+- Headings: Sora 700, tight letter-spacing
+- Body: DM Sans 400, 15-17px
+- Numbers: JetBrains Mono
+- Section labels: gold, uppercase, 11px, 4px letter-spacing
 
 ### Still Needs Work (Sprint 9+):
 
