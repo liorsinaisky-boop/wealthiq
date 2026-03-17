@@ -38,7 +38,7 @@ function calcBonusesPenalties(profile: FinancialProfile, categories: CategorySco
 
   // Asset concentration
   const totalAssets = (categories.find(c => c.category === "wealth_growth")?.details?.totalAssets as number) ?? 0;
-  const reValue = profile.realEstate.properties.reduce((s, pr) => s + pr.estimatedValue, 0);
+  const reValue = (profile.realEstate.properties ?? []).reduce((s, pr) => s + pr.estimatedValue, 0);
   const singleAssetPct = totalAssets > 0 ? Math.max(reValue, profile.pension.currentBalance, investments.brokerageAccount?.totalValue ?? 0) / totalAssets : 0;
   results.push({
     id: "concentration", descriptionHe: "ריכוז גבוה בנכס אחד (מעל 50%)",
@@ -65,15 +65,15 @@ function buildNetWorthSummary(profile: FinancialProfile): NetWorthSummary {
   const assetBreakdown = {
     pension: pension.currentBalance,
     kerenHishtalmut: pension.kerenHishtalmut.balance ?? 0,
-    realEstate: realEstate.properties.reduce((s, p) => s + p.estimatedValue, 0),
-    investments: (investments.brokerageAccount?.totalValue ?? 0) + investments.otherInvestments.reduce((s, i) => s + i.totalValue, 0),
+    realEstate: (realEstate.properties ?? []).reduce((s, p) => s + p.estimatedValue, 0),
+    investments: (investments.brokerageAccount?.totalValue ?? 0) + (investments.otherInvestments ?? []).reduce((s, i) => s + i.totalValue, 0),
     crypto: investments.crypto?.totalValue ?? 0,
     savings: savings.liquidSavings + (savings.emergencyFundAmount ?? 0) + (savings.fixedDepositsAmount ?? 0) + (savings.savingsPlansAmount ?? 0),
-    otherAssets: savings.childSavingsBalance ?? 0,
+    otherAssets: (savings.childSavingsBalance ?? 0) + (realEstate.vehicleOwned ? (realEstate.vehicleValue ?? 0) * 0.85 : 0),
   };
   const liabilityBreakdown = {
-    mortgages: realEstate.properties.reduce((s, p) => s + (p.mortgage?.remainingBalance ?? 0), 0),
-    loans: debt.loans.reduce((s, l) => s + l.remainingBalance, 0),
+    mortgages: (realEstate.properties ?? []).reduce((s, p) => s + (p.mortgage?.remainingBalance ?? 0), 0),
+    loans: (debt.loans ?? []).reduce((s, l) => s + l.remainingBalance, 0),
     creditCardDebt: debt.creditCardDebt,
   };
   const totalAssets = Object.values(assetBreakdown).reduce((a, b) => a + b, 0);
@@ -129,11 +129,13 @@ function buildInsightsContext(profile: FinancialProfile, categories: CategorySco
     percentile,
     riskTolerance: p.riskTolerance,
     primaryGoal: p.primaryGoal,
-    mortgageRate: profile.realEstate.properties[0]?.mortgage?.interestRate,
+    mortgageRate: (profile.realEstate.properties ?? [])[0]?.mortgage?.interestRate,
     savingsAccountRate: savings.fixedDepositsRate ?? undefined,
     investmentFees: investments.brokerageAccount?.annualFeePercent,
     realEstateConcentration: +rePct.toFixed(2),
     currencyDiversification: +currencyDiv.toFixed(2),
+    monthlyCarPayment: profile.realEstate.monthlyCarPayment,
+    expenseBreakdown: cashFlow.expenseBreakdown,
   };
 }
 

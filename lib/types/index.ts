@@ -150,6 +150,11 @@ export interface RealEstateSection {
   planningToBuy: boolean;
   targetBudget?: number;
   downPaymentAvailable?: number;
+  // Vehicle
+  vehicleOwned?: boolean;
+  vehicleValue?: number;
+  monthlyCarPayment?: number;
+  isLeased?: boolean;
 }
 
 // ────────────────────────────────────────────────────────────
@@ -277,11 +282,14 @@ export interface InsuranceSection {
 // ────────────────────────────────────────────────────────────
 
 export interface ExpenseBreakdown {
-  housing: number; // rent or mortgage (auto-filled if available)
-  food: number;
-  transportation: number;
-  children: number;
-  entertainment: number;
+  housing: number;       // rent or mortgage (auto-filled from Section 4 if available)
+  utilities: number;     // electricity, water, gas, internet
+  food: number;          // groceries & food
+  transportation: number; // fuel, public transit, parking
+  insurance: number;     // insurance premiums (auto-filled from Section 8 if available)
+  childcare: number;     // childcare & education
+  entertainment: number; // entertainment & dining out
+  subscriptions: number; // subscriptions & memberships
   other: number;
 }
 
@@ -438,6 +446,8 @@ export interface InsightsContext {
   investmentFees?: number;
   realEstateConcentration: number; // % of net worth in real estate
   currencyDiversification: number; // % in non-NIS assets
+  monthlyCarPayment?: number;
+  expenseBreakdown?: Partial<ExpenseBreakdown>;
 }
 
 // ────────────────────────────────────────────────────────────

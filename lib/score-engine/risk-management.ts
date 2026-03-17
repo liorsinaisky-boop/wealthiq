@@ -40,14 +40,14 @@ function insuranceCoverageScore(profile: FinancialProfile): number {
 function concentrationRiskScore(profile: FinancialProfile): number {
   const total =
     profile.pension.currentBalance +
-    profile.realEstate.properties.reduce((s, p) => s + p.estimatedValue, 0) +
+    (profile.realEstate.properties ?? []).reduce((s, p) => s + p.estimatedValue, 0) +
     (profile.investments.brokerageAccount?.totalValue ?? 0) +
     (profile.investments.crypto?.totalValue ?? 0) +
     profile.savings.liquidSavings;
 
   if (total === 0) return 50;
 
-  const re = profile.realEstate.properties.reduce((s, p) => s + p.estimatedValue, 0);
+  const re = (profile.realEstate.properties ?? []).reduce((s, p) => s + p.estimatedValue, 0);
   const crypto = profile.investments.crypto?.totalValue ?? 0;
   const maxBucket = Math.max(re, profile.pension.currentBalance, profile.investments.brokerageAccount?.totalValue ?? 0, crypto, profile.savings.liquidSavings);
   const concentration = maxBucket / total;

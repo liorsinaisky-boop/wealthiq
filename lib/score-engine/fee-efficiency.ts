@@ -30,8 +30,8 @@ function investmentFeeScore(profile: FinancialProfile): number {
 function loanRateScore(profile: FinancialProfile): number {
   const { debt, realEstate } = profile;
   const rates: number[] = [];
-  realEstate.properties.forEach(p => { if (p.mortgage) rates.push(p.mortgage.interestRate); });
-  debt.loans.forEach(l => rates.push(l.interestRate));
+  (realEstate.properties ?? []).forEach(p => { if (p.mortgage) rates.push(p.mortgage.interestRate); });
+  (debt.loans ?? []).forEach(l => rates.push(l.interestRate));
 
   if (rates.length === 0) return 70; // no debt = neutral-positive
   const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;

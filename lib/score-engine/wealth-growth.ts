@@ -4,23 +4,27 @@ import { clamp, scoreToGrade } from "@/lib/utils/format";
 
 function calcNetWorth(profile: FinancialProfile) {
   const { pension, realEstate, investments, savings } = profile;
+  // Vehicle: include at 85% of stated value (depreciating asset)
+  const vehicleAsset = realEstate.vehicleOwned ? (realEstate.vehicleValue ?? 0) * 0.85 : 0;
+
   const assets =
     pension.currentBalance +
     (pension.kerenHishtalmut.balance ?? 0) +
     (pension.oldAccountsEstimate ?? 0) +
-    realEstate.properties.reduce((sum, p) => sum + p.estimatedValue, 0) +
+    (realEstate.properties ?? []).reduce((sum, p) => sum + p.estimatedValue, 0) +
     (investments.brokerageAccount?.totalValue ?? 0) +
     (investments.crypto?.totalValue ?? 0) +
-    investments.otherInvestments.reduce((sum, i) => sum + i.totalValue, 0) +
+    (investments.otherInvestments ?? []).reduce((sum, i) => sum + i.totalValue, 0) +
     savings.liquidSavings +
     (savings.emergencyFundAmount ?? 0) +
     (savings.fixedDepositsAmount ?? 0) +
     (savings.savingsPlansAmount ?? 0) +
-    (savings.childSavingsBalance ?? 0);
+    (savings.childSavingsBalance ?? 0) +
+    vehicleAsset;
 
   const liabilities =
-    realEstate.properties.reduce((sum, p) => sum + (p.mortgage?.remainingBalance ?? 0), 0) +
-    profile.debt.loans.reduce((sum, l) => sum + l.remainingBalance, 0) +
+    (realEstate.properties ?? []).reduce((sum, p) => sum + (p.mortgage?.remainingBalance ?? 0), 0) +
+    (profile.debt.loans ?? []).reduce((sum, l) => sum + l.remainingBalance, 0) +
     profile.debt.creditCardDebt;
 
   return { assets, liabilities, netWorth: assets - liabilities };
@@ -36,8 +40,8 @@ function diversificationScore(profile: FinancialProfile, totalAssets: number): n
   if (totalAssets === 0) return 50;
   const buckets = [
     profile.pension.currentBalance + (profile.pension.kerenHishtalmut.balance ?? 0),
-    profile.realEstate.properties.reduce((s, p) => s + p.estimatedValue, 0),
-    (profile.investments.brokerageAccount?.totalValue ?? 0) + profile.investments.otherInvestments.reduce((s, i) => s + i.totalValue, 0),
+    (profile.realEstate.properties ?? []).reduce((s, p) => s + p.estimatedValue, 0),
+    (profile.investments.brokerageAccount?.totalValue ?? 0) + (profile.investments.otherInvestments ?? []).reduce((s, i) => s + i.totalValue, 0),
     profile.investments.crypto?.totalValue ?? 0,
     profile.savings.liquidSavings + (profile.savings.fixedDepositsAmount ?? 0),
   ].map(b => b / totalAssets);
@@ -66,7 +70,7 @@ export function scoreWealthGrowth(profile: FinancialProfile): CategoryScore {
   const divScore = diversificationScore(profile, assets);
 
   // Real estate equity as growth component
-  const reEquity = profile.realEstate.properties.reduce((s, p) => s + p.estimatedValue - (p.mortgage?.remainingBalance ?? 0), 0);
+  const reEquity = (profile.realEstate.properties ?? []).reduce((s, p) => s + p.estimatedValue - (p.mortgage?.remainingBalance ?? 0), 0);
   const reScore = reEquity > 0 ? Math.min(100, 50 + (reEquity / (profile.income.monthlyGrossSalary * 120)) * 50) : 30;
 
   const raw = nwScore * 0.35 + divScore * 0.3 + reScore * 0.2 + (netWorth > 0 ? 70 : 20) * 0.15;

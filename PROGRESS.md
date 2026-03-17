@@ -1,8 +1,8 @@
 # WealthIQ Build Progress
 
 Last updated: March 17, 2026
-Last agent: Claude Code — AI migration (Gemini)
-Current sprint: 8
+Last agent: Claude Code — Sprint 8
+Current sprint: 9
 
 ## Sprint Status
 
@@ -13,7 +13,8 @@ Current sprint: 8
 - [x] Sprint 5: What-If Simulator (interactive sliders, projection chart) ✅
 - [ ] Sprint 6: Visual Design Pass (animations, mobile, RTL polish)
 - [x] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel) ✅
-- [ ] Sprint 8: Growth Features (OCR, accounts, PDF export)
+- [x] Sprint 8: Null safety + vehicle + expense breakdown ✅
+- [ ] Sprint 9: Growth Features (OCR, accounts, PDF export)
 
 ## Sprint 1 Checklist
 
@@ -227,7 +228,31 @@ Current sprint: 8
 - systemInstruction + contents format (not system/messages like Anthropic)
 - Fallback still works when `GEMINI_API_KEY` is absent
 
-### Still Needs Work (Sprint 8+):
+## Sprint 8 Checklist
+
+- [x] `npm run type-check` ✅ `npm run build` ✅ `npm run test` ✅ 94/94
+
+### Task 1: Null safety in score engine
+- [x] `wealth-growth.ts` — `properties`, `otherInvestments`, `loans` all guarded with `?? []`
+- [x] `financial-stability.ts` — `totalMonthlyObligations ?? 0`, added car payment to obligations
+- [x] `risk-management.ts` — `properties` × 2 guarded
+- [x] `fee-efficiency.ts` — `properties` and `loans` forEach guarded
+- [x] `composite.ts` — all `.reduce()` on arrays guarded; `properties[0]?.mortgage` optional chained
+
+### Task 2: Vehicle ownership (Section 4)
+- [x] `lib/types/index.ts` — added `vehicleOwned`, `vehicleValue`, `monthlyCarPayment`, `isLeased` to `RealEstateSection`
+- [x] `components/questionnaire/Section4RealEstate.tsx` — vehicle toggle + value/payment/lease fields with Expandable
+- [x] `lib/score-engine/wealth-growth.ts` — vehicle value included at 85% (15% depreciation haircut)
+- [x] `lib/score-engine/financial-stability.ts` — `monthlyCarPayment` included in total debt obligations
+- [x] `lib/score-engine/composite.ts` — vehicle included in `otherAssets` breakdown
+
+### Task 3: Optional expense breakdown (Section 9)
+- [x] `lib/types/index.ts` — `ExpenseBreakdown` expanded to 9 categories (added `utilities`, `insurance`, `childcare`, `subscriptions`)
+- [x] `lib/types/index.ts` — `InsightsContext` extended with `monthlyCarPayment?` and `expenseBreakdown?`
+- [x] `components/questionnaire/Section9CashFlow.tsx` — breakdown toggle (local state), all 9 category inputs, auto-sum, >20% mismatch warning with "update" button, housing pre-fill from mortgage
+- [x] `lib/score-engine/composite.ts` — `expenseBreakdown` passed through to `InsightsContext` for AI
+
+### Still Needs Work (Sprint 9+):
 
 - PDF export
 - Mobile layout polish

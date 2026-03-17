@@ -19,8 +19,10 @@ export default function Section4RealEstate() {
     update({ properties: [{ ...existing, ...data } as Property] });
   };
 
+  const vehicleOwned = realEstate.vehicleOwned ?? false;
+
   return (
-    <SectionWrapper title="נדל״ן" subtitle="בואו נראה מה מצב הנכסים שלך">
+    <SectionWrapper title="נדל״ן ורכב" subtitle="בואו נראה מה מצב הנכסים שלך">
       <YesNo label="יש לך דירה/נכס בבעלותך?" value={ownsProperty}
         onChange={(v) => update({ ownsProperty: v, properties: v ? realEstate.properties : [] })} />
 
@@ -68,6 +70,30 @@ export default function Section4RealEstate() {
           {prop.hasMortgage && prop.mortgage?.remainingBalance ? ` (הון עצמי: ₪${(prop.estimatedValue - prop.mortgage.remainingBalance).toLocaleString()})` : ""}
         </MicroInsight>
       )}
+
+      {/* Vehicle section */}
+      <div className="border-t border-white/10 pt-4">
+        <YesNo label="יש לך רכב?" value={vehicleOwned}
+          onChange={(v) => update({ vehicleOwned: v, vehicleValue: v ? realEstate.vehicleValue : undefined, monthlyCarPayment: v ? realEstate.monthlyCarPayment : undefined, isLeased: v ? realEstate.isLeased : undefined })} />
+
+        <Expandable show={vehicleOwned}>
+          <CurrencyField label="שווי הרכב המשוער" value={realEstate.vehicleValue} placeholder="לדוגמה: 80000"
+            onChange={(v) => update({ vehicleValue: v ?? 0 })} />
+
+          <YesNo label="הרכב בליסינג?" value={realEstate.isLeased ?? false}
+            onChange={(v) => update({ isLeased: v })} />
+
+          <CurrencyField label="תשלום חודשי לרכב (אם ממומן/ליסינג)" value={realEstate.monthlyCarPayment}
+            placeholder="לדוגמה: 2500" hint="אופציונלי — רק אם יש תשלום חודשי"
+            onChange={(v) => update({ monthlyCarPayment: v ?? 0 })} />
+
+          {realEstate.vehicleValue && realEstate.vehicleValue > 0 && (
+            <MicroInsight>
+              שווי הרכב: ₪{realEstate.vehicleValue.toLocaleString()} (נכלל בתיק הנכסים שלך בניכוי פחת)
+            </MicroInsight>
+          )}
+        </Expandable>
+      </div>
     </SectionWrapper>
   );
 }

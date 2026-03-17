@@ -39,14 +39,15 @@ function cashFlowScore(income: number, expenses: number, debtPayments: number): 
 }
 
 export function scoreFinancialStability(profile: FinancialProfile): CategoryScore {
-  const { savings, debt, income, cashFlow, profile: p } = profile;
+  const { savings, debt, income, cashFlow, profile: p, realEstate } = profile;
 
   const liquidTotal = savings.liquidSavings + (savings.emergencyFundAmount ?? 0);
   const efMonths = emergencyFundMonths(liquidTotal, cashFlow.monthlyExpenses);
   const hasDeps = p.dependents > 0;
   const s1 = emergencyFundScore(efMonths, hasDeps);
 
-  const totalDebtPayments = debt.totalMonthlyObligations;
+  // Include vehicle car payment in monthly obligations
+  const totalDebtPayments = (debt.totalMonthlyObligations ?? 0) + (realEstate.monthlyCarPayment ?? 0);
   const dti = debtToIncomeRatio(totalDebtPayments, income.monthlyGrossSalary);
   const s2 = debtScore(dti);
 
