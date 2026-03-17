@@ -18,7 +18,7 @@ Score engine = deterministic TypeScript math. AI = Hebrew language generation ON
 - **Animation:** Framer Motion (step transitions, score reveals, chart animations)
 - **State:** Zustand (questionnaire form state persists across steps)
 - **Charts:** Recharts (net worth projections, allocation pie charts, score radar)
-- **AI:** Claude API (claude-sonnet-4-20250514) for Hebrew insight generation only
+- **AI:** Gemini 2.5 Flash (free tier) for Hebrew insight generation only
 - **Deployment:** Vercel
 - **Testing:** Vitest + React Testing Library
 

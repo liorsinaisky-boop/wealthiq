@@ -2,37 +2,34 @@ import type { InsightsContext, Insight } from "@/lib/types";
 import { INSIGHT_SYSTEM_PROMPT } from "./system-prompts";
 
 export async function generateInsights(context: InsightsContext): Promise<Insight[]> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.warn("No ANTHROPIC_API_KEY — returning fallback insights");
+    console.warn("No GEMINI_API_KEY — returning fallback insights");
     return getFallbackInsights(context);
   }
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
-        system: INSIGHT_SYSTEM_PROMPT,
-        messages: [{
-          role: "user",
-          content: `Analyze this Israeli financial profile and generate insights in Hebrew:\n\n${JSON.stringify(context, null, 2)}`
-        }],
-      }),
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: INSIGHT_SYSTEM_PROMPT }] },
+          contents: [{
+            role: "user",
+            parts: [{ text: `Analyze this Israeli financial profile and generate insights in Hebrew:\n\n${JSON.stringify(context, null, 2)}` }],
+          }],
+          generationConfig: { maxOutputTokens: 2000, temperature: 0.4 },
+        }),
+      }
+    );
 
     const data = await response.json();
-    const text = data.content?.[0]?.text ?? "[]";
-    // Extract JSON from response (handle possible markdown wrapping)
+    const text: string = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "[]";
     const jsonMatch = text.match(/\[[\s\S]*\]/);
     if (!jsonMatch) return getFallbackInsights(context);
-    
+
     const parsed = JSON.parse(jsonMatch[0]) as Array<Omit<Insight, "id">>;
     return parsed.map((item, i) => ({ ...item, id: `insight-${i}` }));
   } catch (err) {

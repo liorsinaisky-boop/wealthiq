@@ -1,7 +1,7 @@
 # WealthIQ Build Progress
 
 Last updated: March 17, 2026
-Last agent: Claude Code — Sprint 7
+Last agent: Claude Code — AI migration (Gemini)
 Current sprint: 8
 
 ## Sprint Status
@@ -210,6 +210,22 @@ Current sprint: 8
 
 **`app/globals.css`**
 - Added `.btn-gold`, `.btn-outline`, `.input-field`, `.progress-fill` class definitions
+
+## AI Migration: Anthropic → Gemini 2.5 Flash
+
+- [x] `npm uninstall @anthropic-ai/sdk` — SDK removed (was never used directly anyway)
+- [x] `lib/ai/insight-generator.ts` — replaced Anthropic fetch endpoint with Gemini `generateContent` API
+- [x] `lib/ai/system-prompts.ts` — no change needed (prompt was already model-agnostic)
+- [x] `.env.example` — `ANTHROPIC_API_KEY` → `GEMINI_API_KEY` (aistudio.google.com)
+- [x] `CLAUDE.md` — AI line updated to "Gemini 2.5 Flash (free tier)"
+- [x] `README.md` — all references updated (tech stack, architecture, env var instructions)
+- [x] `npm run build` ✅ `npm run test` ✅ 94/94
+
+### Gemini API details:
+- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
+- Auth: `?key=GEMINI_API_KEY` query param
+- systemInstruction + contents format (not system/messages like Anthropic)
+- Fallback still works when `GEMINI_API_KEY` is absent
 
 ### Still Needs Work (Sprint 8+):
 

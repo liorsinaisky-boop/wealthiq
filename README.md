@@ -12,7 +12,7 @@ Thousands of Israelis post pension screenshots in Facebook groups asking "is thi
 
 - 🧠 **WealthIQ Score (0–100)** — composite financial health metric
 - 📊 **6 Category Scores** — retirement readiness, stability, growth, risk, fees, goal alignment
-- 🤖 **AI Insights in Hebrew** — powered by Claude, explains findings in plain language
+- 🤖 **AI Insights in Hebrew** — powered by Gemini 2.5 Flash, explains findings in plain language
 - 📱 **Mobile-first, RTL-native** — designed for Hebrew from day one
 - 🔒 **No data stored** — stateless, everything calculated on the fly
 - 🎯 **Shareable score card** — built for social virality
@@ -27,14 +27,14 @@ Thousands of Israelis post pension screenshots in Facebook groups asking "is thi
 | Animation | Framer Motion |
 | State | Zustand |
 | Charts | Recharts |
-| AI | Claude API (Sonnet) |
+| AI | Gemini 2.5 Flash (free tier) |
 | Hosting | Vercel |
 
 ## Architecture
 
 ```
 Score Engine (TypeScript)  →  deterministic financial math, no AI
-AI Layer (Claude API)      →  Hebrew language generation ONLY
+AI Layer (Gemini 2.5 Flash) →  Hebrew language generation ONLY
 Frontend (Next.js)         →  RTL-native, dark theme, gold accents
 ```
 
@@ -52,7 +52,7 @@ npm install
 
 # Set up env (optional — works without API key using fallback insights)
 cp .env.example .env.local
-# Add your ANTHROPIC_API_KEY if you want AI-generated insights
+# Add your GEMINI_API_KEY if you want AI-generated insights (free at aistudio.google.com)
 
 # Run
 npm run dev
@@ -84,7 +84,7 @@ lib/
 1. Push to GitHub
 2. Go to [vercel.com](https://vercel.com) → Import Project → select your repo
 3. Add environment variable in Vercel dashboard:
-   - `ANTHROPIC_API_KEY` — your Claude API key (get it at console.anthropic.com)
+   - `GEMINI_API_KEY` — your Gemini API key (free at [aistudio.google.com](https://aistudio.google.com/app/apikey))
    - `NEXT_PUBLIC_BASE_URL` — your production URL (e.g. `https://wealthiq.co.il`)
 4. Deploy — Vercel auto-detects Next.js, no config needed
 
@@ -98,7 +98,7 @@ vercel --prod
 
 Set env vars:
 ```bash
-vercel env add ANTHROPIC_API_KEY production
+vercel env add GEMINI_API_KEY production
 vercel env add NEXT_PUBLIC_BASE_URL production
 ```
 
@@ -110,7 +110,7 @@ npm run start
 # Open http://localhost:3000
 ```
 
-> **Note:** The app works without `ANTHROPIC_API_KEY` — it uses fallback Hebrew insights.
+> **Note:** The app works without `GEMINI_API_KEY` — it uses fallback Hebrew insights.
 > Score calculation is fully client-side and requires no environment variables.
 
 ## Regulatory Notice
