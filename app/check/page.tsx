@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useQuestionnaireStore } from "@/lib/store/questionnaire-store";
@@ -81,6 +81,7 @@ function buildFullProfile(data: Partial<FinancialProfile>): FinancialProfile {
 
 export default function CheckPage() {
   const router = useRouter();
+  const [showToast, setShowToast] = useState(false);
   const {
     currentStep, completedSteps, data, nextStep, prevStep, setStep,
     markComplete, setSubmitting, setError, isSubmitting, error,
@@ -117,6 +118,8 @@ export default function CheckPage() {
       handleSubmit();
     } else {
       nextStep();
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 1500);
     }
   }, [currentStep, isLastStep, markComplete, nextStep, handleSubmit]);
 
@@ -289,6 +292,27 @@ export default function CheckPage() {
           מידע כללי בלבד. אינו מהווה ייעוץ פנסיוני או המלצה.
         </p>
       </div>
+
+      {/* Section complete toast */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-xl border px-5 py-3 text-sm font-medium shadow-lg"
+            style={{
+              backgroundColor: "rgba(52,211,153,0.1)",
+              borderColor: "rgba(52,211,153,0.25)",
+              color: "#34D399",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            ✓ קטגוריה הושלמה
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

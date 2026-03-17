@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import AnimatedNumber from "@/components/ui/AnimatedNumber";
 
 // ── Demo ring constants ───────────────────────────────────────
 const DEMO_SCORE = 78;
@@ -51,11 +52,29 @@ const FEATURES = [
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const el = heroRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      setMousePos({
+        x: ((e.clientX - cx) / rect.width) * 24,
+        y: ((e.clientY - cy) / rect.height) * 16,
+      });
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
   return (
@@ -86,7 +105,7 @@ export default function LandingPage() {
       </nav>
 
       {/* ── HERO ────────────────────────────────────────────── */}
-      <section className="px-6 pb-24 pt-32">
+      <section ref={heroRef} className="px-6 pb-24 pt-32">
         <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
 
           {/* Text column */}
@@ -117,19 +136,18 @@ export default function LandingPage() {
 
             {/* Stats */}
             <div className="mt-12 flex gap-10">
-              {(
-                [["45", "שאלות"], ["6", "ממדים"], ["0", "נתונים נשמרים"]] as [string, string][]
-              ).map(([num, label]) => (
-                <div key={label}>
-                  <div
-                    className="font-jetbrains-mono text-2xl font-bold"
-                    style={{ color: "#C8A24E" }}
-                  >
-                    {num}
-                  </div>
-                  <div className="mt-0.5 text-sm" style={{ color: "#8A8680" }}>{label}</div>
-                </div>
-              ))}
+              <div>
+                <AnimatedNumber value={45} duration={1200} className="font-jetbrains-mono text-2xl font-bold" style={{ color: "#C8A24E" }} />
+                <div className="mt-0.5 text-sm" style={{ color: "#8A8680" }}>שאלות</div>
+              </div>
+              <div>
+                <AnimatedNumber value={6} duration={800} className="font-jetbrains-mono text-2xl font-bold" style={{ color: "#C8A24E" }} />
+                <div className="mt-0.5 text-sm" style={{ color: "#8A8680" }}>ממדים</div>
+              </div>
+              <div>
+                <div className="font-jetbrains-mono text-2xl font-bold" style={{ color: "#C8A24E" }}>0</div>
+                <div className="mt-0.5 text-sm" style={{ color: "#8A8680" }}>נתונים נשמרים</div>
+              </div>
             </div>
           </motion.div>
 
@@ -142,6 +160,23 @@ export default function LandingPage() {
           >
             {/* Outer decorative wrapper */}
             <div className="relative" style={{ width: "340px", height: "340px" }}>
+              {/* Parallax background glow */}
+              <motion.div
+                className="pointer-events-none absolute rounded-full"
+                style={{
+                  width: "280px",
+                  height: "280px",
+                  top: "50%",
+                  left: "50%",
+                  background: "radial-gradient(circle, rgba(200,162,78,0.12) 0%, transparent 70%)",
+                  filter: "blur(32px)",
+                }}
+                animate={{
+                  x: mousePos.x - 140,
+                  y: mousePos.y - 140,
+                }}
+                transition={{ type: "spring", stiffness: 60, damping: 20 }}
+              />
               {/* Orbital rings */}
               <div
                 className="absolute inset-0 rounded-full"

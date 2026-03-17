@@ -297,13 +297,18 @@ Current sprint: 9
 - [x] `components/results/DeepInsightsSection.tsx` — "ניתוח עמוק" section, 2-col grid with staggered ScrollReveal
 - [x] `app/results/page.tsx` — integrated DeepInsightsSection between AI insights and simulator
 
-### Feature 3: Micro-interactions
+### Feature 3: Micro-interactions & Engagement (completed)
 - [x] `components/ui/ScrollReveal.tsx` — Framer Motion useInView, directions: up/left/right, configurable delay/duration, once only
-- [x] `app/page.tsx` — ScrollReveal on HOW/SCORING/FEATURES/CTA sections; cards staggered 80-100ms
-- [x] `app/check/page.tsx` — AnimatePresence milestone banners: gold on investments step, green on insurance step
-- [x] `components/results/CategoryCard.tsx` — whileHover: y:-4px (lift) + border tints with category color
-- [x] `components/results/InsightCard.tsx` — thumbs up/down feedback row (local state, cosmetic only)
-- [x] `app/results/page.tsx` — 2px gold scroll progress bar fixed at top; keyboard shortcuts: 'C' toggles chat, Escape closes; header hint "לחץ/י C לפתיחת יועץ AI"
+- [x] `components/ui/AnimatedNumber.tsx` — count-up from 0 on scroll into view, ease-out cubic, accepts style prop
+- [x] `components/ui/PageTransition.tsx` — AnimatePresence route transition, opacity+y 300ms
+- [x] `app/layout.tsx` — PageTransition wraps children for page-level route transitions
+- [x] `app/page.tsx` — ScrollReveal on HOW/SCORING/FEATURES/CTA; AnimatedNumber on hero stats (45, 6); mouse parallax glow behind ring; section-ref for mouse tracking
+- [x] `app/check/page.tsx` — milestone banners (gold on investments, green on insurance); section-complete toast (AnimatePresence, 1.5s auto-dismiss, "✓ קטגוריה הושלמה")
+- [x] `components/questionnaire/FieldComponents.tsx` — CurrencyField uses type="text" + comma formatting on input (toLocaleString he-IL), strips commas on parse
+- [x] `components/results/CategoryCard.tsx` — whileHover lift+border tint; accepts deepInsight prop; click-to-expand relatedMetrics with trend icons (positive/negative/neutral)
+- [x] `components/results/ScoreGauge.tsx` — accepts categoryScores prop; click-to-toggle breakdown view (6 category rows with colored dot + label + score + animated mini bar)
+- [x] `components/results/InsightCard.tsx` — thumbs up/down feedback; share button (clipboard copy titleHe+bodyHe, "✓ הועתק" confirmation)
+- [x] `app/results/page.tsx` — scroll progress bar; C/Escape shortcuts; deepInsight passed to each CategoryCard; ScoreGauge gets categoryScores; '?' overlay shows shortcuts modal; header hint updated
 
 ### Still Needs Work (Sprint 9+):
 

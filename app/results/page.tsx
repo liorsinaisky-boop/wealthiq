@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { FinancialProfile, WealthIQResult, Insight, DeepInsight } from "@/lib/types";
 import { calculateWealthIQ } from "@/lib/score-engine/composite";
 import { generateDeepInsights } from "@/lib/score-engine/deep-insights";
@@ -34,6 +34,7 @@ export default function ResultsPage() {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [deepInsights, setDeepInsights] = useState<DeepInsight[]>([]);
   const [scrollPct, setScrollPct] = useState(0);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   const { setContext, isOpen, toggleChat } = useChatStore();
 
@@ -48,13 +49,17 @@ export default function ResultsPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Keyboard shortcuts: 'c' toggles chat, Escape closes
+  // Keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "c" || e.key === "C") toggleChat();
-      if (e.key === "Escape" && isOpen) toggleChat();
+      if (e.key === "?" || e.key === "/") setShowShortcuts((p) => !p);
+      if (e.key === "Escape") {
+        if (isOpen) toggleChat();
+        setShowShortcuts(false);
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -129,7 +134,7 @@ export default function ResultsPage() {
           </Link>
           <div className="flex items-center gap-4">
             <span className="hidden text-xs sm:block" style={{ color: "#5A5650" }}>
-              לחץ/י C לפתיחת יועץ AI
+              C = יועץ AI · ? = קיצורים
             </span>
             <Link href="/check" className="text-sm transition-colors" style={{ color: "#8A8680" }}>
               בדיקה חדשה
@@ -151,7 +156,7 @@ export default function ResultsPage() {
             >
               הציון הפיננסי שלך
             </motion.p>
-            <ScoreGauge score={result.totalScore} />
+            <ScoreGauge score={result.totalScore} categoryScores={result.categoryScores} />
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -178,9 +183,22 @@ export default function ResultsPage() {
               initial="hidden"
               animate="visible"
             >
-              {result.categoryScores.map((cat) => (
-                <CategoryCard key={cat.category} category={cat} />
-              ))}
+              {result.categoryScores.map((cat) => {
+                const catToDeep: Record<string, string> = {
+                  retirement_readiness: "retirement",
+                  financial_stability: "stability",
+                  wealth_growth: "growth",
+                  risk_management: "risk",
+                  fee_efficiency: "fees",
+                  goal_alignment: "goals",
+                };
+                const deepInsight = deepInsights.find(
+                  (d) => d.category === catToDeep[cat.category]
+                );
+                return (
+                  <CategoryCard key={cat.category} category={cat} deepInsight={deepInsight} />
+                );
+              })}
             </motion.div>
           </section>
         </ScrollReveal>
@@ -269,6 +287,62 @@ export default function ResultsPage() {
       {/* Floating AI Chat */}
       <ChatPanel />
       <ChatButton />
+
+      {/* Keyboard shortcuts overlay */}
+      <AnimatePresence>
+        {showShortcuts && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center px-4"
+            style={{ backgroundColor: "rgba(6,8,12,0.85)", backdropFilter: "blur(8px)" }}
+            onClick={() => setShowShortcuts(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 12 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 12 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-sm rounded-2xl p-6"
+              style={{
+                backgroundColor: "#0E1015",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="mb-5 font-sora text-base font-semibold" style={{ color: "#E8E4DC" }}>
+                קיצורי מקלדת
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { key: "C", desc: "פתח/סגור יועץ AI" },
+                  { key: "?", desc: "הצג/הסתר קיצורים" },
+                  { key: "Esc", desc: "סגור פאנלים פתוחים" },
+                ].map(({ key, desc }) => (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className="text-sm" style={{ color: "#8A8680" }}>{desc}</span>
+                    <kbd
+                      className="rounded-md px-2 py-1 font-jetbrains-mono text-xs"
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#C8A24E",
+                      }}
+                    >
+                      {key}
+                    </kbd>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-5 text-center text-xs" style={{ color: "#3D3A38" }}>
+                לחץ בכל מקום לסגירה
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

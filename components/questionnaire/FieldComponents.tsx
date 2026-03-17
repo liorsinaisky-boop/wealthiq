@@ -1,24 +1,49 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Currency Input (₪) ──────────────────────────────────────
 
+function formatCommas(n: number): string {
+  return n.toLocaleString("he-IL");
+}
+
 export function CurrencyField({ label, value, onChange, placeholder, hint }: {
   label: string; value: number | undefined | ""; onChange: (v: number | undefined) => void;
   placeholder?: string; hint?: string;
 }) {
+  const [display, setDisplay] = useState<string>(
+    value != null && value !== "" ? formatCommas(Number(value)) : ""
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, "").replace(/[^\d]/g, "");
+    if (raw === "") {
+      setDisplay("");
+      onChange(undefined);
+    } else {
+      const num = parseInt(raw, 10);
+      setDisplay(formatCommas(num));
+      onChange(num);
+    }
+  };
+
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-300">{label}</label>
       <div className="relative">
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">₪</span>
-        <input type="number" dir="ltr" min={0} step={1000}
-          placeholder={placeholder ?? ""} value={value ?? ""}
-          onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-          className="input-field pr-8 text-left" />
+        <input
+          type="text"
+          inputMode="numeric"
+          dir="ltr"
+          placeholder={placeholder ?? ""}
+          value={display}
+          onChange={handleChange}
+          className="input-field pr-8 text-left"
+        />
       </div>
       {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
     </div>

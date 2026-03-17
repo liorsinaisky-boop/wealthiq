@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import PageTransition from "@/components/ui/PageTransition";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://wealthiq.co.il";
 
@@ -76,7 +77,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen bg-dark-500 font-dm-sans antialiased" style={{ color: "#E8E4DC" }}>
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
       </body>
     </html>
   );
