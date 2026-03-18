@@ -1,48 +1,87 @@
 // ============================================================
-// Suggested Questions — Generates contextual chat questions
-// Pure TypeScript, no AI, based on weakest categories + red flags
+// Suggested Questions — Contextual chat question generation
+// Pure TypeScript, no AI, deterministic
 // ============================================================
-import type { WealthIQResult } from "@/lib/types";
+import type { FinancialProfile, WealthIQResult } from "@/lib/types";
 
-const CATEGORY_QUESTIONS: Record<string, string> = {
-  retirement_readiness: "האם אני בדרך הנכונה לפרישה?",
-  financial_stability: "איך אני יכול/ה לשפר את היציבות הפיננסית שלי?",
-  wealth_growth: "מה הדרך הטובה ביותר לצמיח את ההון שלי?",
-  risk_management: "איך אני יכול/ה להגן טוב יותר על הנכסים שלי?",
-  fee_efficiency: "כמה עולים לי דמי הניהול ואיך להפחיתם?",
-  goal_alignment: "האם אני מתקדם/ת לעבר המטרות הפיננסיות שלי?",
+// ── Opening goal buttons (shown with the greeting message) ────
+export function getOpeningGoalButtons(
+  profile: FinancialProfile,
+  result: WealthIQResult
+): string[] {
+  const buttons: string[] = [];
+  const age = profile.profile.age;
+  const hasKids = profile.profile.dependents > 0;
+  const ownsProperty = profile.realEstate.ownsProperty;
+  const hasMortgage = (profile.realEstate.properties ?? []).some((p) => p.hasMortgage);
+  const hasDebt = profile.debt.totalMonthlyObligations > 0;
+  const stabilityScore = result.categoryScores.find(
+    (c) => c.category === "financial_stability"
+  );
+
+  // Age-based primary goal
+  if (age < 45) {
+    buttons.push("אני רוצה לפרוש מוקדם");
+  } else {
+    buttons.push("האם אני מוכן/ה לפרישה?");
+  }
+
+  // Contextual situational goals
+  if (!ownsProperty) buttons.push("אני רוצה לקנות דירה");
+  if (hasMortgage) buttons.push("אני רוצה לסיים את המשכנתה מהר יותר");
+  if (hasKids) buttons.push("אני רוצה להבטיח את עתיד הילדים");
+  if (stabilityScore && stabilityScore.score < 60) {
+    buttons.push("אני צריך/ה רשת ביטחון גדולה יותר");
+  }
+  if (hasDebt) buttons.push("אני רוצה לצאת מחובות");
+
+  // Always offer a passive option
+  buttons.push("פשוט הסבר לי את התוצאות");
+
+  return buttons.slice(0, 4);
+}
+
+// ── Follow-up questions after each bot response ───────────────
+const CATEGORY_FOLLOWUPS: Record<string, string> = {
+  retirement_readiness: "איך הפנסיה שלי נראית?",
+  financial_stability: "קרן החירום שלי מספיקה?",
+  wealth_growth: "איך אוכל לצמיח את ההון שלי מהר יותר?",
+  risk_management: "מאילו סיכונים כדאי לי לחשוש?",
+  fee_efficiency: "האם דמי הניהול שלי גבוהים מדי?",
+  goal_alignment: "האם אני בדרך הנכונה למטרות שלי?",
 };
 
-const RED_FLAG_QUESTIONS: Record<string, string> = {
-  high_pension_fees: "למה דמי הניהול של הפנסיה כל כך חשובים?",
-  low_emergency_fund: "כמה חסכון חירום אני באמת צריך/ה?",
-  crypto_concentration: "מה הסיכון בהחזקת קריפטו כחלק גדול מהתיק?",
-  no_disability_insurance: "למה ביטוח אובדן כושר עבודה כל כך חשוב?",
-  high_dti: "איך אני יכול/ה להפחית את יחס החוב-הכנסה שלי?",
-  no_will: "למה צריך צוואה ואיך עושים אחת?",
-  low_savings_rate: "איך אני יכול/ה להגדיל את שיעור החיסכון שלי?",
-  asset_concentration: "איך לגוון את תיק ההשקעות שלי?",
-};
+const EARLY_STAGE_QUESTIONS = [
+  "באיזה גיל אני רוצה לפרוש?",
+  "כמה אני צריך/ה בחודש בפרישה?",
+  "מה הדאגה הכספית הגדולה שלי?",
+];
 
+export function getFollowUpQuestions(
+  result: WealthIQResult,
+  messageCount: number
+): string[] {
+  // Early conversation: generic exploratory questions
+  if (messageCount <= 3) {
+    return EARLY_STAGE_QUESTIONS;
+  }
+
+  // Later: probe the three weakest categories
+  return [...result.categoryScores]
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3)
+    .map((cat) => CATEGORY_FOLLOWUPS[cat.category])
+    .filter(Boolean) as string[];
+}
+
+// ── Legacy: kept for backward compat (no longer used in page.tsx) ──
 export function generateInitialQuestions(
   result: WealthIQResult,
-  redFlagIds: string[]
+  _redFlagIds: string[]
 ): string[] {
-  const questions: string[] = [];
-
-  // First: up to 2 contextual questions from active red flags
-  for (const id of redFlagIds.slice(0, 2)) {
-    const q = RED_FLAG_QUESTIONS[id];
-    if (q) questions.push(q);
-  }
-
-  // Fill remaining slots from weakest scoring categories
-  const sorted = [...result.categoryScores].sort((a, b) => a.score - b.score);
-  for (const cat of sorted) {
-    if (questions.length >= 3) break;
-    const q = CATEGORY_QUESTIONS[cat.category];
-    if (q && !questions.includes(q)) questions.push(q);
-  }
-
-  return questions.slice(0, 3);
+  return [...result.categoryScores]
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3)
+    .map((cat) => CATEGORY_FOLLOWUPS[cat.category])
+    .filter(Boolean) as string[];
 }

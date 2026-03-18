@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { ChatMessage, FinancialProfile, WealthIQResult, Insight } from "@/lib/types";
+import { getFollowUpQuestions } from "@/lib/ai/suggested-questions";
 
 export interface ChatContext {
   profile: FinancialProfile;
@@ -50,7 +51,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   addGreeting: (text: string, questions: string[]) => {
     const { messages } = get();
-    if (messages.length > 0) return; // only add once
+    if (messages.length > 0) return; // only inject once
     const greetingMsg: ChatMessage = {
       role: "assistant",
       content: text,
@@ -65,7 +66,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   sendMessage: async (message: string) => {
     const { messages, context } = get();
-
     if (!context) return;
 
     const userMsg: ChatMessage = {
@@ -93,10 +93,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         timestamp: Date.now(),
       };
 
+      // Prefer API-returned suggestions; fall back to deterministic follow-ups
+      const apiSuggestions: string[] = data.suggestedQuestions ?? [];
+      const fallback = getFollowUpQuestions(context.result, updatedMessages.length);
+      const suggestions = apiSuggestions.length > 0 ? apiSuggestions : fallback;
+
       set((s) => ({
         messages: [...s.messages, assistantMsg],
         isLoading: false,
-        suggestedQuestions: data.suggestedQuestions ?? [],
+        suggestedQuestions: suggestions,
       }));
     } catch {
       const errMsg: ChatMessage = {

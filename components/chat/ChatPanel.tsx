@@ -7,19 +7,23 @@ import { useChatStore } from "@/lib/store/chat-store";
 import SuggestedQuestions from "./SuggestedQuestions";
 import type { ChatMessage } from "@/lib/types";
 
-// ── Loading dots ──────────────────────────────────────────────
-function TypingDots() {
+// ── Thinking indicator ────────────────────────────────────────
+function ThinkingIndicator() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3">
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="h-1.5 w-1.5 rounded-full"
-          style={{ backgroundColor: "#8A8680" }}
-          animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
-          transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.18 }}
-        />
-      ))}
+    <div className="flex justify-start">
+      <motion.div
+        className="rounded-2xl px-4 py-2.5 text-sm"
+        style={{
+          backgroundColor: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          color: "#5A5650",
+          borderRadius: "16px 16px 16px 4px",
+        }}
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+      >
+        חושב/ת...
+      </motion.div>
     </div>
   );
 }
@@ -37,8 +41,9 @@ function MessageBubble({ msg, isFirst }: { msg: ChatMessage; isFirst: boolean })
       className={`flex ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className="max-w-[80%] text-sm leading-relaxed"
+        className="max-w-[85%] leading-relaxed"
         style={{
+          fontSize: isGreeting ? "16px" : "14px",
           backgroundColor: isUser
             ? "rgba(200,162,78,0.12)"
             : "rgba(255,255,255,0.05)",
@@ -49,9 +54,10 @@ function MessageBubble({ msg, isFirst }: { msg: ChatMessage; isFirst: boolean })
           border: isUser
             ? "1px solid rgba(200,162,78,0.2)"
             : "1px solid rgba(255,255,255,0.06)",
-          // Gold left border for the greeting message
-          borderRight: isGreeting ? "3px solid rgba(200,162,78,0.5)" : undefined,
-          padding: isGreeting ? "12px 16px 12px 14px" : "10px 16px",
+          // Prominent gold right-border for the greeting (visual start in RTL)
+          borderRight: isGreeting ? "4px solid #C8A24E" : undefined,
+          padding: isGreeting ? "14px 18px 14px 16px" : "10px 16px",
+          whiteSpace: "pre-wrap",
         }}
       >
         {msg.content}
@@ -135,7 +141,7 @@ export default function ChatPanel() {
                 WealthIQ Advisor
               </h3>
               <p className="text-xs" style={{ color: "#8A8680" }}>
-                שאל/י על הבריאות הפיננסית שלך
+                יועץ פיננסי AI אישי
               </p>
             </div>
             <button
@@ -156,24 +162,13 @@ export default function ChatPanel() {
                 className="mt-6 text-center text-sm"
                 style={{ color: "#5A5650" }}
               >
-                <div className="mb-3 text-3xl">💬</div>
-                <p>שאל/י כל שאלה על הציון והמצב הפיננסי שלך</p>
+                <p>מכין את הניתוח שלך...</p>
               </motion.div>
             )}
             {messages.map((msg, i) => (
               <MessageBubble key={i} msg={msg} isFirst={i === 0} />
             ))}
-            {isLoading && (
-              <div
-                className="w-fit rounded-2xl"
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                }}
-              >
-                <TypingDots />
-              </div>
-            )}
+            {isLoading && <ThinkingIndicator />}
             <div ref={messagesEndRef} />
           </div>
 
@@ -199,7 +194,7 @@ export default function ChatPanel() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value.slice(0, 500))}
               onKeyDown={handleKeyDown}
-              placeholder="שאל/י על הציון שלך..."
+              placeholder="כתוב/י תשובה..."
               className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none transition-all"
               style={{
                 backgroundColor: "rgba(255,255,255,0.04)",

@@ -1,7 +1,7 @@
 # WealthIQ Build Progress
 
 Last updated: March 18, 2026
-Last agent: Claude Code — Red Flags + Proactive Chatbot
+Last agent: Claude Code — Proactive Interviewer Chatbot
 Current sprint: 9
 
 ## Sprint Status
@@ -15,7 +15,8 @@ Current sprint: 9
 - [x] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel) ✅
 - [x] Sprint 8: Null safety + vehicle + expense breakdown ✅
 - [x] Sprint 9a: Prominent Red Flags + Proactive Chatbot ✅
-- [ ] Sprint 9b: Growth Features (OCR, accounts, PDF export)
+- [x] Sprint 9b: Proactive Interviewer Chatbot ✅
+- [ ] Sprint 9c: Growth Features (OCR, accounts, PDF export)
 
 ## Sprint 9a Checklist
 
@@ -35,6 +36,20 @@ Current sprint: 9
 - [x] `components/chat/ChatPanel.tsx` — Wider (420px), taller (560px); first bot message has gold right-border; "Powered by AI" label at bottom
 - [x] `components/chat/ChatButton.tsx` — Notification dot (gold, 12px) when `hasUnread && !isOpen`; removed old pulse ring logic
 - [x] `components/chat/SuggestedQuestions.tsx` — New extracted component; gold outline pills at 13px, rounded-full, hover gold highlight
+
+## Sprint 9b Checklist
+
+- [x] `npm run build` ✅ zero errors
+- [x] `npm run type-check` ✅ zero errors
+- [x] `npm run test` ✅ 94/94 tests pass
+
+### Proactive Interviewer Chatbot
+- [x] `lib/ai/system-prompts.ts` — Rewrote SYSTEM_PROMPT_CHAT: bot leads conversation, asks questions, gives data-backed insights after each answer, follows interview flow (goal → timeline → concern → quick wins → ongoing); responses capped at 100 words; always ends with question or clickable options
+- [x] `lib/ai/suggested-questions.ts` — Added `getOpeningGoalButtons(profile, result)`: builds 4 contextual goal buttons from age, property ownership, mortgage, kids, debt, stability score; Added `getFollowUpQuestions(result, messageCount)`: returns early-stage exploratory questions (msgs 1-3) or weakest-category questions (msgs 4+) as fallback
+- [x] `lib/store/chat-store.ts` — `sendMessage` now falls back to `getFollowUpQuestions` when API returns no suggestedQuestions
+- [x] `app/results/page.tsx` — Auto-greeting rewritten: "ציון WealthIQ שלך: X/100 — Grade. {summary}. מה המטרה הפיננסית הראשית שלך עכשיו?" with `getOpeningGoalButtons` as the 4 action buttons
+- [x] `components/chat/ChatPanel.tsx` — First bot message: 16px font + 4px gold right-border; "Thinking..." pulsing text replaces spinning dots; placeholder changed to "כתוב/י תשובה..."
+- [x] `components/chat/SuggestedQuestions.tsx` — Redesigned: gold-tinted full-width vertical stack (not horizontal scroll); 14px font; hover scale 1.02 via Framer Motion whileHover
 
 ## Sprint 1 Checklist
 

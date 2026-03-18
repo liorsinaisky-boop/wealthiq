@@ -8,7 +8,7 @@ import { calculateWealthIQ } from "@/lib/score-engine/composite";
 import { generateDeepInsights } from "@/lib/score-engine/deep-insights";
 import { detectRedFlags } from "@/lib/score-engine/red-flags";
 import type { RedFlag } from "@/lib/score-engine/red-flags";
-import { generateInitialQuestions } from "@/lib/ai/suggested-questions";
+import { getOpeningGoalButtons } from "@/lib/ai/suggested-questions";
 import ScoreGauge from "@/components/results/ScoreGauge";
 import CategoryCard from "@/components/results/CategoryCard";
 import InsightCard from "@/components/results/InsightCard";
@@ -113,21 +113,25 @@ export default function ResultsPage() {
     if (phase !== "results" || hasAutoOpened || !result) return;
 
     const timer = setTimeout(() => {
-      const flags = detectRedFlags(
-        profile!,
-        result
-      );
-      const flagIds = flags.map((f) => f.id);
-      const questions = generateInitialQuestions(result, flagIds);
+      const flags = detectRedFlags(profile!, result);
+      const goalButtons = getOpeningGoalButtons(profile!, result);
 
-      const attentionCount = flags.length;
+      const flagCount = flags.length;
+      let summary: string;
+      if (flagCount > 0) {
+        summary = `מצאתי ${flagCount} דברים שדורשים טיפול.`;
+      } else if (result.totalScore >= 80) {
+        summary = "אתה/את במצב מצוין — בואו נמצא איפה ניתן לשפר.";
+      } else if (result.totalScore >= 50) {
+        summary = "יש בסיס טוב עם מקום לצמיחה.";
+      } else {
+        summary = "יש כמה תחומים חשובים שנדבר עליהם.";
+      }
+
       const greeting =
-        `היי! ניתחתי את התוצאות שלך. הציון הכולל שלך הוא ${result.totalScore}/100.` +
-        (attentionCount > 0
-          ? ` שמתי לב ל-${attentionCount} תחומים שדורשים תשומת לב. רוצה שאסביר מה מוריד את הציון שלך?`
-          : " המצב הפיננסי שלך נראה טוב! רוצה שנצלול לפרטים?");
+        `ציון WealthIQ שלך: ${result.totalScore}/100 — ${result.grade}. ${summary}\n\nלפני שנצלול לפרטים, אשמח להבין מה חשוב לך. מה המטרה הפיננסית הראשית שלך עכשיו?`;
 
-      addGreeting(greeting, questions);
+      addGreeting(greeting, goalButtons);
       openChat();
     }, 2000);
 
