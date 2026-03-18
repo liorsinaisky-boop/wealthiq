@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, X } from "lucide-react";
 import { useChatStore } from "@/lib/store/chat-store";
+import SuggestedQuestions from "./SuggestedQuestions";
 import type { ChatMessage } from "@/lib/types";
 
 // ── Loading dots ──────────────────────────────────────────────
@@ -24,8 +25,10 @@ function TypingDots() {
 }
 
 // ── Single message bubble ─────────────────────────────────────
-function MessageBubble({ msg }: { msg: ChatMessage }) {
+function MessageBubble({ msg, isFirst }: { msg: ChatMessage; isFirst: boolean }) {
   const isUser = msg.role === "user";
+  const isGreeting = !isUser && isFirst;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -34,7 +37,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
       className={`flex ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed"
+        className="max-w-[80%] text-sm leading-relaxed"
         style={{
           backgroundColor: isUser
             ? "rgba(200,162,78,0.12)"
@@ -46,6 +49,9 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
           border: isUser
             ? "1px solid rgba(200,162,78,0.2)"
             : "1px solid rgba(255,255,255,0.06)",
+          // Gold left border for the greeting message
+          borderRight: isGreeting ? "3px solid rgba(200,162,78,0.5)" : undefined,
+          padding: isGreeting ? "12px 16px 12px 14px" : "10px 16px",
         }}
       >
         {msg.content}
@@ -95,11 +101,6 @@ export default function ChatPanel() {
     }
   };
 
-  const handleSuggestion = (q: string) => {
-    if (isLoading) return;
-    sendMessage(q);
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -108,12 +109,12 @@ export default function ChatPanel() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.96 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="fixed z-49 flex flex-col overflow-hidden"
+          className="fixed flex flex-col overflow-hidden"
           style={{
             bottom: "88px",
             right: "24px",
-            width: "380px",
-            height: "500px",
+            width: "420px",
+            height: "560px",
             backgroundColor: "#0E1015",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "16px",
@@ -160,7 +161,7 @@ export default function ChatPanel() {
               </motion.div>
             )}
             {messages.map((msg, i) => (
-              <MessageBubble key={i} msg={msg} />
+              <MessageBubble key={i} msg={msg} isFirst={i === 0} />
             ))}
             {isLoading && (
               <div
@@ -179,39 +180,11 @@ export default function ChatPanel() {
           {/* Suggested questions */}
           <AnimatePresence>
             {suggestedQuestions.length > 0 && !isLoading && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="flex-shrink-0 overflow-x-auto px-4 pb-2"
-                style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
-              >
-                <div className="flex gap-2 py-2">
-                  {suggestedQuestions.map((q, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSuggestion(q)}
-                      className="flex-shrink-0 rounded-full border px-3 py-1.5 text-xs transition-all"
-                      style={{
-                        borderColor: "rgba(200,162,78,0.25)",
-                        color: "#8A8680",
-                        backgroundColor: "transparent",
-                        whiteSpace: "nowrap",
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.target as HTMLButtonElement).style.borderColor = "#C8A24E";
-                        (e.target as HTMLButtonElement).style.color = "#C8A24E";
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.target as HTMLButtonElement).style.borderColor = "rgba(200,162,78,0.25)";
-                        (e.target as HTMLButtonElement).style.color = "#8A8680";
-                      }}
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
+              <SuggestedQuestions
+                questions={suggestedQuestions}
+                onSelect={(q) => sendMessage(q)}
+                disabled={isLoading}
+              />
             )}
           </AnimatePresence>
 
@@ -246,6 +219,14 @@ export default function ChatPanel() {
             >
               <Send className="h-4 w-4" style={{ color: "#06080C" }} />
             </button>
+          </div>
+
+          {/* Powered by AI label */}
+          <div
+            className="flex-shrink-0 pb-2 text-center"
+            style={{ fontSize: "10px", color: "#3D3A38" }}
+          >
+            Powered by AI · מידע כללי בלבד, אינו ייעוץ פיננסי
           </div>
         </motion.div>
       )}

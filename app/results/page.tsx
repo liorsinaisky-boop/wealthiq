@@ -6,11 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { FinancialProfile, WealthIQResult, Insight, DeepInsight } from "@/lib/types";
 import { calculateWealthIQ } from "@/lib/score-engine/composite";
 import { generateDeepInsights } from "@/lib/score-engine/deep-insights";
+import { detectRedFlags } from "@/lib/score-engine/red-flags";
+import type { RedFlag } from "@/lib/score-engine/red-flags";
+import { generateInitialQuestions } from "@/lib/ai/suggested-questions";
 import ScoreGauge from "@/components/results/ScoreGauge";
 import CategoryCard from "@/components/results/CategoryCard";
 import InsightCard from "@/components/results/InsightCard";
 import NetWorthChart from "@/components/results/NetWorthChart";
 import LoadingAnalysis from "@/components/results/LoadingAnalysis";
+import RedFlagsSection from "@/components/results/RedFlagsSection";
 import DeepInsightsSection from "@/components/results/DeepInsightsSection";
 import SimulatorPanel from "@/components/simulator/SimulatorPanel";
 import ChatButton from "@/components/chat/ChatButton";
@@ -33,10 +37,11 @@ export default function ResultsPage() {
   const [profile, setProfile] = useState<FinancialProfile | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [deepInsights, setDeepInsights] = useState<DeepInsight[]>([]);
+  const [redFlags, setRedFlags] = useState<RedFlag[]>([]);
   const [scrollPct, setScrollPct] = useState(0);
   const [showShortcuts, setShowShortcuts] = useState(false);
 
-  const { setContext, isOpen, toggleChat } = useChatStore();
+  const { setContext, isOpen, toggleChat, openChat, addGreeting, hasAutoOpened } = useChatStore();
 
   // Scroll progress bar
   useEffect(() => {
@@ -79,6 +84,9 @@ export default function ResultsPage() {
     // Deep insights (deterministic, instant)
     setDeepInsights(generateDeepInsights(parsed, wealthIQResult));
 
+    // Red flags (deterministic, instant)
+    setRedFlags(detectRedFlags(parsed, wealthIQResult));
+
     // AI insights (async)
     fetch("/api/insights", {
       method: "POST",
@@ -89,7 +97,6 @@ export default function ResultsPage() {
       .then((data) => {
         if (data.success && data.insights) {
           setInsights(data.insights);
-          // Set chat context once insights are ready
           setContext({ profile: parsed, result: wealthIQResult, insights: data.insights });
         } else {
           setContext({ profile: parsed, result: wealthIQResult, insights: [] });
@@ -100,6 +107,33 @@ export default function ResultsPage() {
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
+  // Auto-open chat 2s after results phase starts (once per session)
+  useEffect(() => {
+    if (phase !== "results" || hasAutoOpened || !result) return;
+
+    const timer = setTimeout(() => {
+      const flags = detectRedFlags(
+        profile!,
+        result
+      );
+      const flagIds = flags.map((f) => f.id);
+      const questions = generateInitialQuestions(result, flagIds);
+
+      const attentionCount = flags.length;
+      const greeting =
+        `היי! ניתחתי את התוצאות שלך. הציון הכולל שלך הוא ${result.totalScore}/100.` +
+        (attentionCount > 0
+          ? ` שמתי לב ל-${attentionCount} תחומים שדורשים תשומת לב. רוצה שאסביר מה מוריד את הציון שלך?`
+          : " המצב הפיננסי שלך נראה טוב! רוצה שנצלול לפרטים?");
+
+      addGreeting(greeting, questions);
+      openChat();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, hasAutoOpened, result]);
 
   if (phase === "loading") {
     return <LoadingAnalysis onComplete={() => setPhase("results")} />;
@@ -170,6 +204,13 @@ export default function ResultsPage() {
             </motion.p>
           </section>
         </ScrollReveal>
+
+        {/* Red Flags — shown BEFORE category cards */}
+        {redFlags.length > 0 && (
+          <ScrollReveal direction="up" delay={0}>
+            <RedFlagsSection flags={redFlags} />
+          </ScrollReveal>
+        )}
 
         {/* Category grid */}
         <ScrollReveal direction="up" delay={100}>

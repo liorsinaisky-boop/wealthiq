@@ -1,37 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
 import { useChatStore } from "@/lib/store/chat-store";
 
 export default function ChatButton() {
-  const { isOpen, toggleChat } = useChatStore();
-  const [pulseDone, setPulseDone] = useState(false);
-
-  // Stop pulse after 3 cycles (~3s)
-  useEffect(() => {
-    const t = setTimeout(() => setPulseDone(true), 3200);
-    return () => clearTimeout(t);
-  }, []);
+  const { isOpen, toggleChat, hasUnread } = useChatStore();
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center">
-      {/* Pulse ring — shows on first load */}
-      {!pulseDone && !isOpen && (
-        <motion.div
-          className="absolute rounded-full"
-          style={{
-            width: "56px",
-            height: "56px",
-            backgroundColor: "rgba(200,162,78,0.3)",
-          }}
-          animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
-          transition={{ duration: 1.2, repeat: 2, ease: "easeInOut" }}
-          onAnimationComplete={() => setPulseDone(true)}
-        />
-      )}
-
       <motion.button
         onClick={toggleChat}
         whileHover={{ scale: 1.08 }}
@@ -66,6 +43,29 @@ export default function ChatButton() {
             >
               <MessageCircle className="h-5 w-5" style={{ color: "#06080C" }} />
             </motion.span>
+          )}
+        </AnimatePresence>
+
+        {/* Notification dot — shows when there's an unread greeting */}
+        <AnimatePresence>
+          {hasUnread && !isOpen && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: "absolute",
+                top: "2px",
+                right: "2px",
+                width: "12px",
+                height: "12px",
+                borderRadius: "50%",
+                backgroundColor: "#C8A24E",
+                border: "2px solid #06080C",
+                boxShadow: "0 0 6px rgba(200,162,78,0.6)",
+              }}
+            />
           )}
         </AnimatePresence>
       </motion.button>

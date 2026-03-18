@@ -1,12 +1,6 @@
 import { create } from "zustand";
 import type { ChatMessage, FinancialProfile, WealthIQResult, Insight } from "@/lib/types";
 
-const INITIAL_SUGGESTIONS = [
-  "מה הכי מושך את הציון שלי למטה?",
-  "איך הציון שלי משתווה לאחרים בגילי?",
-  "מה הדבר הכי משפיע שאני יכול/ה לעשות?",
-];
-
 export interface ChatContext {
   profile: FinancialProfile;
   result: WealthIQResult;
@@ -19,47 +13,70 @@ interface ChatStore {
   isLoading: boolean;
   suggestedQuestions: string[];
   context: ChatContext | null;
+  hasAutoOpened: boolean;
+  hasUnread: boolean;
 
   toggleChat: () => void;
+  openChat: () => void;
   setContext: (ctx: ChatContext) => void;
   sendMessage: (message: string) => Promise<void>;
   clearChat: () => void;
   setSuggestions: (q: string[]) => void;
+  addGreeting: (text: string, questions: string[]) => void;
+  markRead: () => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   messages: [],
   isOpen: false,
   isLoading: false,
-  suggestedQuestions: INITIAL_SUGGESTIONS,
+  suggestedQuestions: [],
   context: null,
+  hasAutoOpened: false,
+  hasUnread: false,
 
-  toggleChat: () => set((s) => ({ isOpen: !s.isOpen })),
+  toggleChat: () =>
+    set((s) => {
+      const opening = !s.isOpen;
+      return { isOpen: opening, hasUnread: opening ? false : s.hasUnread };
+    }),
 
-  setContext: (ctx) =>
-    set({ context: ctx, suggestedQuestions: INITIAL_SUGGESTIONS }),
+  openChat: () =>
+    set({ isOpen: true, hasAutoOpened: true, hasUnread: false }),
+
+  setContext: (ctx) => set({ context: ctx }),
 
   setSuggestions: (q) => set({ suggestedQuestions: q }),
 
-  clearChat: () =>
-    set({ messages: [], suggestedQuestions: INITIAL_SUGGESTIONS }),
+  addGreeting: (text: string, questions: string[]) => {
+    const { messages } = get();
+    if (messages.length > 0) return; // only add once
+    const greetingMsg: ChatMessage = {
+      role: "assistant",
+      content: text,
+      timestamp: Date.now(),
+    };
+    set({ messages: [greetingMsg], suggestedQuestions: questions, hasUnread: true });
+  },
+
+  markRead: () => set({ hasUnread: false }),
+
+  clearChat: () => set({ messages: [], suggestedQuestions: [] }),
 
   sendMessage: async (message: string) => {
     const { messages, context } = get();
 
     if (!context) return;
 
-    // Add user message immediately
     const userMsg: ChatMessage = {
       role: "user",
       content: message,
       timestamp: Date.now(),
     };
     const updatedMessages = [...messages, userMsg];
-    set({ messages: updatedMessages, isLoading: true, suggestedQuestions: [] });
+    set({ messages: updatedMessages, isLoading: true, suggestedQuestions: [], hasUnread: false });
 
     try {
-      // Send last 10 messages (including the one just added) as history
       const history = updatedMessages.slice(-10);
 
       const res = await fetch("/api/chat", {
@@ -84,7 +101,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch {
       const errMsg: ChatMessage = {
         role: "assistant",
-        content: "I'm having trouble connecting right now. Try again in a moment.",
+        content: "אין חיבור כרגע. נסה/י שוב בעוד רגע.",
         timestamp: Date.now(),
       };
       set((s) => ({

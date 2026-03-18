@@ -1,7 +1,7 @@
 # WealthIQ Build Progress
 
 Last updated: March 18, 2026
-Last agent: Claude Code — Engagement Layer
+Last agent: Claude Code — Red Flags + Proactive Chatbot
 Current sprint: 9
 
 ## Sprint Status
@@ -14,7 +14,27 @@ Current sprint: 9
 - [x] Sprint 6: Visual Design Pass — Luminous Observatory theme ✅
 - [x] Sprint 7: SEO, Sharing & Deploy (OG images, meta tags, Vercel) ✅
 - [x] Sprint 8: Null safety + vehicle + expense breakdown ✅
-- [ ] Sprint 9: Growth Features (OCR, accounts, PDF export)
+- [x] Sprint 9a: Prominent Red Flags + Proactive Chatbot ✅
+- [ ] Sprint 9b: Growth Features (OCR, accounts, PDF export)
+
+## Sprint 9a Checklist
+
+- [x] `npm run build` ✅ zero errors
+- [x] `npm run type-check` ✅ zero errors
+- [x] `npm run test` ✅ 94/94 tests pass
+
+### Change 1: Red Flags — In Your Face
+- [x] `lib/score-engine/red-flags.ts` — Pure TypeScript detection for 8 conditions: high pension fees (>1.2%), low emergency fund (<2mo), crypto concentration (>20%), no disability insurance + dependents, high DTI (>50%), no will + dependents, low savings rate (<5%), single asset concentration (>50%)
+- [x] `components/results/RedFlagsSection.tsx` — Full-width section, no collapse, each flag is a large card with 8px accent border (red=critical, amber=warning), Sora 700 title at 20px, DM Sans description at 15px, JetBrains Mono metric at 24px, Framer Motion slide-in from left with 100ms stagger
+- [x] Placement in `app/results/page.tsx`: AFTER ScoreGauge, BEFORE CategoryCards — second thing user sees
+
+### Change 2: Proactive Chatbot
+- [x] `lib/ai/suggested-questions.ts` — Generates contextual questions from active red flags (up to 2) + weakest categories; purely deterministic, no AI
+- [x] `lib/store/chat-store.ts` — Added `hasAutoOpened`, `hasUnread` flags; `openChat()`, `addGreeting()`, `markRead()` actions; removed hardcoded initial suggestions
+- [x] `app/results/page.tsx` — Auto-opens chat 2s after results phase starts (once per session via `hasAutoOpened`); injects static greeting with score + red flag count + contextual suggested questions
+- [x] `components/chat/ChatPanel.tsx` — Wider (420px), taller (560px); first bot message has gold right-border; "Powered by AI" label at bottom
+- [x] `components/chat/ChatButton.tsx` — Notification dot (gold, 12px) when `hasUnread && !isOpen`; removed old pulse ring logic
+- [x] `components/chat/SuggestedQuestions.tsx` — New extracted component; gold outline pills at 13px, rounded-full, hover gold highlight
 
 ## Sprint 1 Checklist
 
