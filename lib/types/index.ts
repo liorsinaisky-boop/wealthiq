@@ -184,6 +184,7 @@ export interface BrokerageAccount {
   totalValue: number;
   allocation: PortfolioAllocation;
   annualFeePercent: number;
+  monthlyContribution?: number; // DCA — monthly addition
 }
 
 export type CryptoHolding =
@@ -196,6 +197,7 @@ export type CryptoHolding =
 export interface CryptoInvestment {
   totalValue: number;
   holdings: CryptoHolding[];
+  monthlyContribution?: number; // DCA — monthly addition
 }
 
 export type OtherInvestmentType =
@@ -208,6 +210,7 @@ export type OtherInvestmentType =
 export interface OtherInvestment {
   type: OtherInvestmentType;
   totalValue: number;
+  monthlyContribution?: number; // DCA — monthly addition
 }
 
 export interface InvestmentsSection {

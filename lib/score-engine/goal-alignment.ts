@@ -2,14 +2,19 @@ import type { FinancialProfile, CategoryScore } from "@/lib/types";
 import { CATEGORY_WEIGHTS, RETIREMENT_AGE_MALE, RETIREMENT_AGE_FEMALE } from "./constants";
 import { futureValueAnnuity, futureValueLumpSum } from "@/lib/utils/calculations";
 import { clamp, scoreToGrade } from "@/lib/utils/format";
+import { calcTotalMonthlyDCA } from "./wealth-growth";
 
 function retirementProjection(profile: FinancialProfile): number {
   const { pension, income, profile: p, cashFlow } = profile;
   const retAge = p.targetRetirementAge || (p.gender === "female" ? RETIREMENT_AGE_FEMALE : RETIREMENT_AGE_MALE);
   const yearsLeft = Math.max(0, retAge - p.age);
   const monthlyContrib = income.monthlyGrossSalary * 0.185;
-  const projectedPension = futureValueLumpSum(pension.currentBalance, 0.05, yearsLeft) +
-    futureValueAnnuity(monthlyContrib, 0.05, yearsLeft);
+  // Include DCA contributions (at 7% growth for investment portfolio)
+  const totalMonthlyDCA = calcTotalMonthlyDCA(profile);
+  const projectedPension =
+    futureValueLumpSum(pension.currentBalance, 0.05, yearsLeft) +
+    futureValueAnnuity(monthlyContrib, 0.05, yearsLeft) +
+    futureValueAnnuity(totalMonthlyDCA, 0.07, yearsLeft);
   // Safe withdrawal: 4% rule → monthly income
   const monthlyRetirementIncome = (projectedPension * 0.04) / 12;
   const targetIncome = cashFlow.monthlyExpenses * 0.8; // 80% replacement

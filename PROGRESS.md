@@ -1,7 +1,7 @@
 # WealthIQ Build Progress
 
 Last updated: March 18, 2026
-Last agent: Claude Code — Proactive Interviewer Chatbot
+Last agent: Claude Code — Pushback Personality + Monthly DCA
 Current sprint: 9
 
 ## Sprint Status
@@ -16,7 +16,8 @@ Current sprint: 9
 - [x] Sprint 8: Null safety + vehicle + expense breakdown ✅
 - [x] Sprint 9a: Prominent Red Flags + Proactive Chatbot ✅
 - [x] Sprint 9b: Proactive Interviewer Chatbot ✅
-- [ ] Sprint 9c: Growth Features (OCR, accounts, PDF export)
+- [x] Sprint 9c: Chatbot Pushback Personality + Monthly DCA ✅
+- [ ] Sprint 9d: Growth Features (OCR, accounts, PDF export)
 
 ## Sprint 9a Checklist
 
@@ -36,6 +37,21 @@ Current sprint: 9
 - [x] `components/chat/ChatPanel.tsx` — Wider (420px), taller (560px); first bot message has gold right-border; "Powered by AI" label at bottom
 - [x] `components/chat/ChatButton.tsx` — Notification dot (gold, 12px) when `hasUnread && !isOpen`; removed old pulse ring logic
 - [x] `components/chat/SuggestedQuestions.tsx` — New extracted component; gold outline pills at 13px, rounded-full, hover gold highlight
+
+## Sprint 9c Checklist
+
+- [x] `npm run build` ✅ zero errors
+- [x] `npm run test` ✅ 94/94 tests pass
+
+### Change 1: Chatbot Pushback Personality
+- [x] `lib/ai/system-prompts.ts` — Added PUSHBACK BEHAVIOR section to SYSTEM_PROMPT_CHAT: acknowledge + one shock-value number from real data → if dismissed again, respect and move on. Includes 3 examples (pension fees, emergency fund, crypto). Never pushes more than once on same topic.
+
+### Change 2: Monthly DCA Contributions (Section 5)
+- [x] `lib/types/index.ts` — Added `monthlyContribution?: number` to `BrokerageAccount`, `CryptoInvestment`, `OtherInvestment`
+- [x] `components/questionnaire/Section5Investments.tsx` — Added "הפקדה חודשית (DCA)" CurrencyField in 2-col grid next to total value for brokerage and crypto
+- [x] `lib/score-engine/wealth-growth.ts` — Added `calcTotalMonthlyDCA()` helper; added 10% DCA momentum sub-score to wealth growth calculation (rebalanced weights)
+- [x] `lib/score-engine/goal-alignment.ts` — Imports `calcTotalMonthlyDCA`; adds `futureValueAnnuity(totalMonthlyDCA, 0.07, yearsLeft)` to retirement projection (7% growth rate for investments)
+- [x] `app/api/chat/route.ts` — Added `totalMonthlyDCA: calcTotalMonthlyDCA(context.profile)` to ctxSummary so AI can reference it
 
 ## Sprint 9b Checklist
 

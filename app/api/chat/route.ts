@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { ChatRequest, ChatResponse } from "@/lib/types";
 import { SYSTEM_PROMPT_CHAT } from "@/lib/ai/system-prompts";
+import { calcTotalMonthlyDCA } from "@/lib/score-engine/wealth-growth";
 
 export async function POST(req: NextRequest): Promise<NextResponse<ChatResponse>> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ChatResponse>
       yearsToRetirement: context.result.insightsContext.yearsToRetirement,
       percentile: context.result.insightsContext.percentile,
     },
+    totalMonthlyDCA: calcTotalMonthlyDCA(context.profile),
   };
 
   const systemText =

@@ -2,6 +2,14 @@ import type { FinancialProfile, CategoryScore } from "@/lib/types";
 import { CATEGORY_WEIGHTS, MEDIAN_SALARY_BY_AGE } from "./constants";
 import { clamp, scoreToGrade } from "@/lib/utils/format";
 
+export function calcTotalMonthlyDCA(profile: FinancialProfile): number {
+  return (
+    (profile.investments.brokerageAccount?.monthlyContribution ?? 0) +
+    (profile.investments.crypto?.monthlyContribution ?? 0) +
+    (profile.investments.otherInvestments ?? []).reduce((sum, i) => sum + (i.monthlyContribution ?? 0), 0)
+  );
+}
+
 function calcNetWorth(profile: FinancialProfile) {
   const { pension, realEstate, investments, savings } = profile;
   // Vehicle: include at 85% of stated value (depreciating asset)
@@ -73,7 +81,11 @@ export function scoreWealthGrowth(profile: FinancialProfile): CategoryScore {
   const reEquity = (profile.realEstate.properties ?? []).reduce((s, p) => s + p.estimatedValue - (p.mortgage?.remainingBalance ?? 0), 0);
   const reScore = reEquity > 0 ? Math.min(100, 50 + (reEquity / (profile.income.monthlyGrossSalary * 120)) * 50) : 30;
 
-  const raw = nwScore * 0.35 + divScore * 0.3 + reScore * 0.2 + (netWorth > 0 ? 70 : 20) * 0.15;
+  // DCA momentum: monthly contributions boost score (₪2K/mo = 80 score, ₪1K/mo = 60, ₪0 = 30)
+  const totalMonthlyDCA = calcTotalMonthlyDCA(profile);
+  const dcaScore = totalMonthlyDCA >= 2000 ? 100 : totalMonthlyDCA >= 1000 ? 60 + ((totalMonthlyDCA - 1000) / 1000) * 40 : totalMonthlyDCA > 0 ? 30 + (totalMonthlyDCA / 1000) * 30 : 30;
+
+  const raw = nwScore * 0.30 + divScore * 0.25 + reScore * 0.2 + (netWorth > 0 ? 70 : 20) * 0.15 + dcaScore * 0.10;
   const score = clamp(Math.round(raw * 10) / 10, 0, 100);
 
   return {
@@ -89,6 +101,7 @@ export function scoreWealthGrowth(profile: FinancialProfile): CategoryScore {
       benchmark: Math.round(benchmark),
       diversificationScore: Math.round(divScore),
       realEstateEquity: Math.round(reEquity),
+      totalMonthlyDCA: Math.round(totalMonthlyDCA),
     },
   };
 }
