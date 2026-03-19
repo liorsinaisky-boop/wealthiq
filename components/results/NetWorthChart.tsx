@@ -4,13 +4,13 @@ import { formatCurrency, formatCurrencyCompact } from "@/lib/utils/format";
 import { motion } from "framer-motion";
 
 const ASSET_LABELS: Record<string, { label: string; color: string }> = {
-  pension: { label: "פנסיה", color: "#D4A843" },
-  kerenHishtalmut: { label: "קרן השתלמות", color: "#A67C1E" },
+  pension: { label: "פנסיה", color: "var(--tangerine)" },
+  kerenHishtalmut: { label: "קרן השתלמות", color: "#F9B37E" },
   realEstate: { label: "נדל״ן", color: "#4ADE80" },
   investments: { label: "השקעות", color: "#60A5FA" },
   crypto: { label: "קריפטו", color: "#F97316" },
   savings: { label: "חסכונות", color: "#A78BFA" },
-  otherAssets: { label: "אחר", color: "#6B7280" },
+  otherAssets: { label: "אחר", color: "#94A3B8" },
 };
 
 export default function NetWorthChart({ netWorth }: { netWorth: NetWorthSummary }) {
@@ -21,15 +21,15 @@ export default function NetWorthChart({ netWorth }: { netWorth: NetWorthSummary 
   const total = netWorth.totalAssets || 1;
 
   return (
-    <div className="glass-card p-6">
-      <h3 className="text-lg font-bold mb-4">שווי נקי</h3>
+    <div className="glass-card p-6 bg-white shadow-sm border border-slate-100">
+      <h3 className="text-lg font-bold mb-4 text-slate-900">שווי נקי</h3>
       
       {/* Big number */}
       <div className="text-center mb-6">
-        <span className={`text-4xl font-black ${netWorth.netWorth >= 0 ? "text-green-400" : "text-red-400"}`}>
+        <span className={`text-4xl font-black ${netWorth.netWorth >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
           {formatCurrency(netWorth.netWorth)}
         </span>
-        <div className="flex justify-center gap-6 mt-2 text-sm text-slate-400">
+        <div className="flex justify-center gap-6 mt-2 text-sm text-slate-500">
           <span>נכסים: {formatCurrencyCompact(netWorth.totalAssets)}</span>
           <span>התחייבויות: {formatCurrencyCompact(netWorth.totalLiabilities)}</span>
         </div>
@@ -61,8 +61,8 @@ export default function NetWorthChart({ netWorth }: { netWorth: NetWorthSummary 
           return (
             <div key={key} className="flex items-center gap-2 text-sm">
               <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: meta?.color }} />
-              <span className="text-slate-400">{meta?.label}</span>
-              <span className="text-white font-medium mr-auto" dir="ltr">{formatCurrencyCompact(value)}</span>
+              <span className="text-slate-500">{meta?.label}</span>
+              <span className="text-slate-900 font-medium mr-auto" dir="ltr">{formatCurrencyCompact(value)}</span>
             </div>
           );
         })}

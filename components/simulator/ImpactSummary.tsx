@@ -59,13 +59,13 @@ function ImpactCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.3 }}
-      className="glass-card p-4 text-center"
+      className="glass-card p-4 text-center bg-white border border-slate-100 shadow-sm"
     >
-      <p className="text-xs text-slate-500 mb-1 leading-tight">{label}</p>
-      <p className={`text-lg font-black tabular-nums ${positive ? "text-green-400" : "text-red-400"}`}>
+      <p className="text-xs font-medium text-slate-500 mb-1 leading-tight">{label}</p>
+      <p className={`text-lg font-black tabular-nums ${positive ? "text-emerald-600" : "text-rose-600"}`}>
         {value}
       </p>
-      <p className="text-xs text-slate-600 mt-1 leading-tight">{sub}</p>
+      <p className="text-xs font-medium text-slate-500 mt-1 leading-tight">{sub}</p>
     </motion.div>
   );
 }

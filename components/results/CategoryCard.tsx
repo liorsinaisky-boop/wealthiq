@@ -8,7 +8,7 @@ import { scoreToGrade } from "@/lib/utils/format";
 const CATEGORY_COLORS: Record<string, string> = {
   retirement_readiness: "#60A5FA",
   financial_stability:  "#34D399",
-  wealth_growth:        "#C8A24E",
+  wealth_growth:        "#FF6B00",
   risk_management:      "#FB923C",
   fee_efficiency:       "#F472B6",
   goal_alignment:       "#A78BFA",
@@ -28,8 +28,8 @@ export default function CategoryCard({ category, deepInsight }: { category: Cate
   return (
     <motion.div
       variants={cardVariants}
-      className="card p-5 cursor-pointer"
-      style={{ borderColor: expanded ? `${catColor}30` : "rgba(255,255,255,0.06)" }}
+      className="card p-5 cursor-pointer bg-white"
+      style={{ borderColor: expanded ? `${catColor}30` : "var(--border)" }}
       whileHover={{
         y: -4,
         borderColor: `${catColor}26`,
@@ -45,7 +45,7 @@ export default function CategoryCard({ category, deepInsight }: { category: Cate
             className="h-2 w-2 flex-shrink-0 rounded-full"
             style={{ backgroundColor: catColor }}
           />
-          <h4 className="text-sm font-medium" style={{ color: "#E8E4DC" }}>
+          <h4 className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
             {category.categoryNameHe}
           </h4>
         </div>
@@ -61,7 +61,7 @@ export default function CategoryCard({ category, deepInsight }: { category: Cate
       {/* Progress bar */}
       <div
         className="h-[3px] overflow-hidden rounded-full"
-        style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+        style={{ backgroundColor: "rgba(15,23,42,0.06)" }}
       >
         <motion.div
           className="h-full rounded-full"
@@ -73,7 +73,7 @@ export default function CategoryCard({ category, deepInsight }: { category: Cate
       </div>
 
       {/* Weight */}
-      <p className="mt-2 text-xs" style={{ color: "#5A5650" }}>
+      <p className="mt-2 text-xs" style={{ color: "var(--text-dim)" }}>
         משקל: {(category.weight * 100).toFixed(0)}%
         {deepInsight && (
           <span style={{ color: catColor, opacity: 0.6 }}> · לחץ לפרטים</span>
@@ -90,15 +90,15 @@ export default function CategoryCard({ category, deepInsight }: { category: Cate
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 space-y-2 border-t pt-3" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+            <div className="mt-3 space-y-2 border-t pt-3" style={{ borderColor: "var(--border)" }}>
               {deepInsight.relatedMetrics.slice(0, 3).map((m) => (
                 <div key={m.label} className="flex items-center justify-between">
-                  <span className="text-xs" style={{ color: "#8A8680" }}>{m.label}</span>
+                  <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{m.label}</span>
                   <div className="flex items-center gap-1">
-                    <span className="font-jetbrains-mono text-xs" style={{ color: "#E8E4DC" }}>{m.value}</span>
-                    {m.trend === "positive" && <TrendingUp  className="h-3 w-3" style={{ color: "#34D399" }} />}
-                    {m.trend === "negative" && <TrendingDown className="h-3 w-3" style={{ color: "#EF4444" }} />}
-                    {m.trend === "neutral"  && <Minus className="h-3 w-3" style={{ color: "#5A5650" }} />}
+                    <span className="font-jetbrains-mono text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{m.value}</span>
+                    {m.trend === "positive" && <TrendingUp  className="h-3 w-3" style={{ color: "#059669" }} />}
+                    {m.trend === "negative" && <TrendingDown className="h-3 w-3" style={{ color: "#DC2626" }} />}
+                    {m.trend === "neutral"  && <Minus className="h-3 w-3 text-slate-400" />}
                   </div>
                 </div>
               ))}

@@ -16,7 +16,7 @@ export default function DeepInsightsSection({ insights }: { insights: DeepInsigh
         >
           מתחת למכסה
         </h2>
-        <p className="mb-6 text-sm" style={{ color: "#8A8680" }}>
+        <p className="mb-6 text-sm" style={{ color: "var(--text-muted)" }}>
           לחץ/י על כל קטגוריה לניתוח מלא, השוואה לממוצע, וצעדים ממוקדים
         </p>
       </ScrollReveal>

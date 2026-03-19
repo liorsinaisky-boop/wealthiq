@@ -6,17 +6,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        gold: {
-          50:  "#FFF9E6",
-          100: "#FFF0BF",
-          200: "#F8E4A8",
-          300: "#E8C870",
-          400: "#C8A24E",
-          500: "#B8923E",
-          600: "#8A6E32",
-          700: "#6A5228",
-          800: "#4A3A1E",
-          900: "#2A2012",
+        tangerine: {
+          50:  "#FFF3F0",
+          100: "#FFE4D6",
+          200: "#FFC299",
+          300: "#FFA05C",
+          400: "#FF8533",
+          500: "#FF6B00",
+          600: "#CC5600",
+          700: "#994000",
+          800: "#662B00",
+          900: "#331500",
         },
         dark: {
           50:  "#1A1A22",
@@ -35,6 +35,7 @@ const config: Config = {
         heebo:          ["Heebo", "sans-serif"],
         sora:           ["Sora", "sans-serif"],
         "dm-sans":      ["DM Sans", "sans-serif"],
+        serif:          ["Playfair Display", "Frank Ruhl Libre", "serif"],
         "jetbrains-mono": ["JetBrains Mono", "monospace"],
       },
       animation: {
@@ -42,6 +43,8 @@ const config: Config = {
         "fade-up":      "fadeUp 0.5s ease-out forwards",
         "slide-rtl":    "slideRTL 0.4s ease-out forwards",
         shimmer:        "shimmer 2s linear infinite",
+        "pulse-glow":   "pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        shake:          "shake 0.4s ease-in-out",
       },
       keyframes: {
         scoreFill: {
@@ -59,6 +62,15 @@ const config: Config = {
         shimmer: {
           "0%":   { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition:  "200% 0" },
+        },
+        pulseGlow: {
+          "0%, 100%": { opacity: "1", boxShadow: "0 0 24px rgba(255,107,0,0.15)" },
+          "50%": { opacity: "0.85", boxShadow: "0 0 48px rgba(255,107,0,0.4)" },
+        },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "20%, 60%": { transform: "translateX(-4px)" },
+          "40%, 80%": { transform: "translateX(4px)" },
         },
       },
     },

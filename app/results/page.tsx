@@ -146,12 +146,12 @@ export default function ResultsPage() {
   if (!result || !profile) return null;
 
   return (
-    <main className="min-h-screen pb-24" style={{ backgroundColor: "#06080C" }}>
+    <main className="min-h-screen pb-24" style={{ backgroundColor: "var(--bg)" }}>
       {/* Scroll progress bar */}
       <div
         className="fixed left-0 right-0 top-0 z-[100] h-[2px] origin-left"
         style={{
-          background: "linear-gradient(90deg, #C8A24E, #E0BA72)",
+          background: "linear-gradient(90deg, var(--tangerine), #FFA766)",
           width: `${scrollPct}%`,
           transition: "width 0.1s linear",
         }}
@@ -161,20 +161,20 @@ export default function ResultsPage() {
       <header
         className="sticky top-0 z-50 px-6 py-4"
         style={{
-          backgroundColor: "rgba(6,8,12,0.9)",
+          backgroundColor: "rgba(255,255,255,0.92)",
           backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <div className="mx-auto flex max-w-4xl items-center justify-between">
-          <Link href="/" className="font-sora font-semibold text-lg" style={{ color: "#C8A24E" }}>
+          <Link href="/" className="font-sora font-semibold text-lg" style={{ color: "var(--tangerine)" }}>
             WealthIQ
           </Link>
           <div className="flex items-center gap-4">
-            <span className="hidden text-xs sm:block" style={{ color: "#5A5650" }}>
+            <span className="hidden text-xs sm:block" style={{ color: "var(--text-dim)" }}>
               C = יועץ AI · ? = קיצורים
             </span>
-            <Link href="/check" className="text-sm transition-colors" style={{ color: "#8A8680" }}>
+            <Link href="/check" className="text-sm transition-colors hover:text-slate-900" style={{ color: "var(--text-muted)" }}>
               בדיקה חדשה
             </Link>
           </div>
@@ -190,7 +190,7 @@ export default function ResultsPage() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-6 text-sm uppercase tracking-[3px]"
-              style={{ color: "#8A8680" }}
+              style={{ color: "var(--text-muted)" }}
             >
               הציון הפיננסי שלך
             </motion.p>
@@ -200,9 +200,9 @@ export default function ResultsPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 2 }}
               className="mt-4 text-sm"
-              style={{ color: "#8A8680" }}
+              style={{ color: "var(--text-muted)" }}
             >
-              את/ה ב<span className="font-semibold" style={{ color: "#C8A24E" }}>
+              את/ה ב<span className="font-semibold" style={{ color: "var(--tangerine)" }}>
                 טופ {100 - result.percentileEstimate}%
               </span> לגיל שלך
             </motion.p>
@@ -266,7 +266,7 @@ export default function ResultsPage() {
                 ? insights.map((insight, i) => (
                     <InsightCard key={insight.id} insight={insight} delay={0.08 * i} />
                   ))
-                : <p className="text-sm" style={{ color: "#5A5650" }}>מייצר תובנות...</p>
+                : <p className="text-sm" style={{ color: "var(--text-dim)" }}>מייצר תובנות...</p>
               }
             </div>
           </section>
@@ -283,7 +283,7 @@ export default function ResultsPage() {
             <h2 className="mb-1 font-sora font-semibold text-lg" style={{ letterSpacing: "-0.5px" }}>
               סימולטור ״מה אם?״
             </h2>
-            <p className="mb-5 text-sm" style={{ color: "#8A8680" }}>
+            <p className="mb-5 text-sm" style={{ color: "var(--text-muted)" }}>
               הזז את המחוונים וראה איך החלטות שונות משפיעות על העתיד הפיננסי שלך
             </p>
             <SimulatorPanel profile={profile} />
@@ -301,19 +301,18 @@ export default function ResultsPage() {
                 {result.bonusesPenalties.filter(b => b.applied).map((bp) => (
                   <div
                     key={bp.id}
-                    className="flex items-center gap-3 rounded-xl border p-3"
+                    className="flex items-center gap-3 rounded-xl border p-3 border-slate-200 shadow-sm"
                     style={{
-                      backgroundColor: bp.points > 0 ? "rgba(52,211,153,0.05)" : "rgba(239,68,68,0.05)",
-                      borderColor: bp.points > 0 ? "rgba(52,211,153,0.15)" : "rgba(239,68,68,0.15)",
+                      backgroundColor: bp.points > 0 ? "rgba(16,185,129,0.05)" : "rgba(239,68,68,0.05)",
                     }}
                   >
                     <span
                       className="font-jetbrains-mono text-sm font-bold"
-                      style={{ color: bp.points > 0 ? "#34D399" : "#EF4444" }}
+                      style={{ color: bp.points > 0 ? "#059669" : "#DC2626" }}
                     >
                       {bp.points > 0 ? `+${bp.points}` : bp.points}
                     </span>
-                    <span className="text-sm" style={{ color: "#E8E4DC" }}>{bp.descriptionHe}</span>
+                    <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{bp.descriptionHe}</span>
                   </div>
                 ))}
               </div>
@@ -322,8 +321,8 @@ export default function ResultsPage() {
         )}
 
         {/* Disclaimer */}
-        <footer className="pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-          <p className="text-center text-xs leading-relaxed" style={{ color: "#5A5650" }}>
+        <footer className="pt-8" style={{ borderTop: "1px solid var(--border)" }}>
+          <p className="text-center text-xs leading-relaxed" style={{ color: "var(--text-dim)" }}>
             {result.disclaimer}
           </p>
         </footer>
@@ -342,7 +341,7 @@ export default function ResultsPage() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[200] flex items-center justify-center px-4"
-            style={{ backgroundColor: "rgba(6,8,12,0.85)", backdropFilter: "blur(8px)" }}
+            style={{ backgroundColor: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)" }}
             onClick={() => setShowShortcuts(false)}
           >
             <motion.div
@@ -350,14 +349,14 @@ export default function ResultsPage() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 12 }}
               transition={{ duration: 0.2 }}
-              className="w-full max-w-sm rounded-2xl p-6"
+              className="w-full max-w-sm rounded-2xl p-6 shadow-xl"
               style={{
-                backgroundColor: "#0E1015",
-                border: "1px solid rgba(255,255,255,0.08)",
+                backgroundColor: "#FFFFFF",
+                border: "1px solid var(--border)",
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="mb-5 font-sora text-base font-semibold" style={{ color: "#E8E4DC" }}>
+              <h3 className="mb-5 font-sora text-base font-semibold" style={{ color: "var(--text-primary)" }}>
                 קיצורי מקלדת
               </h3>
               <div className="space-y-3">
@@ -367,13 +366,13 @@ export default function ResultsPage() {
                   { key: "Esc", desc: "סגור פאנלים פתוחים" },
                 ].map(({ key, desc }) => (
                   <div key={key} className="flex items-center justify-between">
-                    <span className="text-sm" style={{ color: "#8A8680" }}>{desc}</span>
+                    <span className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>{desc}</span>
                     <kbd
-                      className="rounded-md px-2 py-1 font-jetbrains-mono text-xs"
+                      className="rounded-md px-2 py-1 font-jetbrains-mono text-xs shadow-sm"
                       style={{
-                        backgroundColor: "rgba(255,255,255,0.06)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        color: "#C8A24E",
+                        backgroundColor: "rgba(15,23,42,0.06)",
+                        border: "1px solid rgba(15,23,42,0.1)",
+                        color: "var(--tangerine)",
                       }}
                     >
                       {key}
@@ -381,7 +380,7 @@ export default function ResultsPage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-center text-xs" style={{ color: "#3D3A38" }}>
+              <p className="mt-5 text-center text-xs" style={{ color: "var(--text-dim)" }}>
                 לחץ בכל מקום לסגירה
               </p>
             </motion.div>

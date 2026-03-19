@@ -32,9 +32,9 @@ export function CurrencyField({ label, value, onChange, placeholder, hint }: {
 
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-slate-800">{label}</label>
       <div className="relative">
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">₪</span>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">₪</span>
         <input
           type="text"
           inputMode="numeric"
@@ -45,7 +45,7 @@ export function CurrencyField({ label, value, onChange, placeholder, hint }: {
           className="input-field pr-8 text-left"
         />
       </div>
-      {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -58,19 +58,19 @@ export function PercentField({ label, value, onChange, placeholder, showDontKnow
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-slate-800">{label}</label>
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
           <input type="number" dir="ltr" min={0} max={100} step={0.01}
             placeholder={placeholder ?? ""} value={value === null ? "" : (value ?? "")}
             onChange={(e) => onChange(e.target.value ? parseFloat(e.target.value) : null)}
             className="input-field pr-8 text-left" disabled={value === null && showDontKnow} />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">%</span>
         </div>
         {showDontKnow && (
           <button type="button" onClick={() => onChange(value === null ? 0 : null)}
             className={`whitespace-nowrap rounded-xl border px-3 py-2.5 text-xs font-medium transition-all ${
-              value === null ? "border-gold-400 bg-gold-400/10 text-gold-400" : "border-dark-50 text-gray-400"
+              value === null ? "border-tangerine-500 bg-tangerine-50 text-tangerine-600" : "border-slate-200 text-slate-500 bg-white shadow-sm"
             }`}>לא יודע/ת</button>
         )}
       </div>
@@ -85,12 +85,12 @@ export function YesNo({ label, value, onChange }: {
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-slate-800">{label}</label>
       <div className="flex gap-3">
         {[true, false].map((v) => (
           <button key={String(v)} type="button" onClick={() => onChange(v)}
-            className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all ${
-              value === v ? "border-gold-400 bg-gold-400/10 text-gold-400" : "border-dark-50 text-gray-400 hover:border-gray-600"
+            className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium shadow-sm transition-all ${
+              value === v ? "border-tangerine-500 bg-tangerine-50 text-tangerine-600" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
             }`}>{v ? "כן" : "לא"}</button>
         ))}
       </div>
@@ -105,12 +105,12 @@ export function CardSelect({ label, options, value, onChange, columns = 2 }: {
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-slate-800">{label}</label>
       <div className={`grid gap-3 ${columns === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
         {options.map(([val, lbl]) => (
           <button key={val} type="button" onClick={() => onChange(val)}
-            className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
-              value === val ? "border-gold-400 bg-gold-400/10 text-gold-400" : "border-dark-50 text-gray-400 hover:border-gray-600"
+            className={`rounded-xl border px-3 py-2.5 text-sm font-medium shadow-sm transition-all ${
+              value === val ? "border-tangerine-500 bg-tangerine-50 text-tangerine-600" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
             }`}>{lbl}</button>
         ))}
       </div>
@@ -124,10 +124,10 @@ export function SectionWrapper({ title, subtitle, children }: {
   title: string; subtitle?: string; children: ReactNode;
 }) {
   return (
-    <div className="glass-card space-y-6 p-6 md:p-8">
+    <div className="glass-card space-y-6 p-6 md:p-8 bg-white border border-slate-100 shadow-sm">
       <div className="mb-2">
-        <h2 className="text-xl font-bold">{title}</h2>
-        {subtitle && <p className="text-sm text-gray-400">{subtitle}</p>}
+        <h2 className="text-xl font-bold text-slate-900">{title}</h2>
+        {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
       </div>
       {children}
     </div>
@@ -138,8 +138,8 @@ export function SectionWrapper({ title, subtitle, children }: {
 
 export function MicroInsight({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-gold-400/20 bg-gold-400/5 p-4">
-      <p className="text-sm text-gold-300">💡 {children}</p>
+    <div className="rounded-xl border border-tangerine-200 bg-tangerine-50 p-4">
+      <p className="text-sm text-tangerine-800">💡 {children}</p>
     </div>
   );
 }
@@ -157,7 +157,7 @@ export function Expandable({ show, children }: { show: boolean; children: ReactN
           transition={{ duration: 0.2, ease: "easeInOut" }}
           className="overflow-hidden"
         >
-          <div className="mt-4 space-y-4 rounded-xl border border-dark-50 bg-dark-300/50 p-4">{children}</div>
+          <div className="mt-4 space-y-4 rounded-xl border border-slate-200 bg-slate-50/80 p-4">{children}</div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -172,14 +172,14 @@ export function NumberField({ label, value, onChange, suffix, hint }: {
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-slate-800">{label}</label>
       <div className="relative">
         <input type="number" dir="ltr" min={0} value={value}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className={`input-field ${suffix ? "pr-8 text-left" : ""}`} />
-        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">{suffix}</span>}
+          className={`input-field bg-white ${suffix ? "pr-8 text-left" : ""}`} />
+        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">{suffix}</span>}
       </div>
-      {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -194,9 +194,9 @@ export function SelectField({ label, options, value, onChange }: {
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-slate-800">{label}</label>
       <select value={value} onChange={(e) => onChange(e.target.value)}
-        className="input-field w-full bg-dark-300">
+        className="input-field w-full bg-white text-slate-800">
         <option value="" disabled>בחר...</option>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -217,14 +217,14 @@ export function ToggleGroup({ label, value, onChange, options }: {
   const cols = options.length <= 2 ? "grid-cols-2" : options.length === 3 ? "grid-cols-3" : "grid-cols-2";
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-slate-800">{label}</label>
       <div className={`grid gap-2 ${cols}`}>
         {options.map((opt) => (
           <button key={opt.value} type="button" onClick={() => onChange(opt.value)}
-            className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
+            className={`rounded-xl border px-3 py-2.5 text-sm font-medium shadow-sm transition-all ${
               value === opt.value
-                ? "border-gold-400 bg-gold-400/10 text-gold-400"
-                : "border-dark-50 text-gray-400 hover:border-gray-600"
+                ? "border-tangerine-500 bg-tangerine-50 text-tangerine-600"
+                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
             }`}>
             {opt.icon && <span className="me-1">{opt.icon}</span>}
             {opt.label}
@@ -246,16 +246,16 @@ export function SliderField({ label, min, max, value, onChange, formatValue, lab
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-300">{label}</label>
-        <span className="font-bold text-gold-400">
+        <label className="text-sm font-medium text-slate-800">{label}</label>
+        <span className="font-bold text-tangerine-600">
           {formatValue ? formatValue(value) : value}
         </span>
       </div>
       <input type="range" dir="ltr" min={min} max={max} value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full accent-gold-400" />
+        className="w-full accent-tangerine-500" />
       {labels && (
-        <div className="mt-1 flex justify-between text-xs text-gray-500">
+        <div className="mt-1 flex justify-between text-xs text-slate-500">
           <span>{labels.start}</span>
           <span>{labels.end}</span>
         </div>
@@ -278,7 +278,7 @@ export function NavButtons({ onNext, onBack, nextLabel }: {
         </button>
       ) : <div />}
       <button type="button" onClick={onNext}
-        className="btn-gold flex items-center gap-1 text-sm">
+        className="btn-tangerine flex items-center gap-1 text-sm">
         <span>{nextLabel ?? "הבא"}</span><ChevronLeft className="h-4 w-4" />
       </button>
     </div>
@@ -290,7 +290,7 @@ export function NavButtons({ onNext, onBack, nextLabel }: {
 export function FieldError({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+    <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400 animate-shake">
       {message}
     </p>
   );

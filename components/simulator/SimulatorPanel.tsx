@@ -21,14 +21,14 @@ function SliderRow({
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-300">{label}</span>
-        <span className="text-sm font-bold text-gold-400 tabular-nums">{format(value)}</span>
+        <span className="text-sm font-medium text-slate-800">{label}</span>
+        <span className="text-sm font-bold text-tangerine-600 tabular-nums">{format(value)}</span>
       </div>
       <input
         type="range" dir="ltr"
         min={min} max={max} step={step} value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full accent-gold-400"
+        className="w-full accent-tangerine-500"
       />
     </div>
   );
@@ -112,7 +112,7 @@ export default function SimulatorPanel({ profile }: { profile: FinancialProfile 
   return (
     <div className="space-y-4">
       {/* Sliders card */}
-      <div className="glass-card p-6 space-y-5">
+      <div className="glass-card p-6 space-y-5 bg-white border border-slate-100 shadow-sm">
         <SliderRow
           label="הגדלת הפקדות חודשיות"
           value={sliders.extraContribution}
@@ -157,8 +157,8 @@ export default function SimulatorPanel({ profile }: { profile: FinancialProfile 
 
       {/* Loading state — no result yet */}
       {!result && loading && (
-        <div className="glass-card p-8 flex items-center justify-center">
-          <span className="text-sm text-gold-400 animate-pulse">מחשב תחזית...</span>
+        <div className="glass-card bg-white border border-slate-100 p-8 flex items-center justify-center">
+          <span className="text-sm text-tangerine-500 animate-pulse font-medium">מחשב תחזית...</span>
         </div>
       )}
     </div>

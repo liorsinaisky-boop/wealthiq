@@ -7,7 +7,7 @@ import type { CategoryScore } from "@/lib/types";
 const CATEGORY_COLORS: Record<string, string> = {
   retirement_readiness: "#60A5FA",
   financial_stability:  "#34D399",
-  wealth_growth:        "#C8A24E",
+  wealth_growth:        "#FF6B00", // var(--tangerine)
   risk_management:      "#FB923C",
   fee_efficiency:       "#F472B6",
   goal_alignment:       "#A78BFA",
@@ -61,7 +61,7 @@ export default function ScoreGauge({ score, size = 280, categoryScores }: ScoreG
               <circle
                 cx={size / 2} cy={size / 2} r={radius}
                 fill="none"
-                stroke="rgba(255,255,255,0.05)"
+                stroke="rgba(15,23,42,0.05)"
                 strokeWidth="12"
               />
               <motion.circle
@@ -87,8 +87,8 @@ export default function ScoreGauge({ score, size = 280, categoryScores }: ScoreG
                 {displayScore}
               </span>
               <span
-                className="mt-2 uppercase tracking-[3px]"
-                style={{ fontSize: "11px", color: "#5A5650" }}
+                className="mt-2 uppercase tracking-[3px] font-medium"
+                style={{ fontSize: "11px", color: "var(--text-dim)" }}
               >
                 {categoryScores ? "לחץ לפירוט" : "הציון שלך"}
               </span>
@@ -101,11 +101,11 @@ export default function ScoreGauge({ score, size = 280, categoryScores }: ScoreG
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="cursor-pointer rounded-2xl p-6"
+            className="cursor-pointer rounded-2xl p-6 shadow-md"
             style={{
               width: size,
-              backgroundColor: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              backgroundColor: "#FFFFFF",
+              border: "1px solid var(--border)",
             }}
             onClick={() => setShowBreakdown(false)}
             title="לחץ לחזרה לציון"
@@ -114,7 +114,7 @@ export default function ScoreGauge({ score, size = 280, categoryScores }: ScoreG
               <span className="font-sora text-lg font-bold" style={{ color }}>
                 {score}
               </span>
-              <span className="text-xs uppercase tracking-[2px]" style={{ color: "#5A5650" }}>
+              <span className="text-xs uppercase tracking-[2px] font-medium" style={{ color: "var(--text-dim)" }}>
                 לחץ לחזרה
               </span>
             </div>
@@ -126,13 +126,13 @@ export default function ScoreGauge({ score, size = 280, categoryScores }: ScoreG
                     <div className="mb-1 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: catColor }} />
-                        <span className="text-xs" style={{ color: "#8A8680" }}>{cat.categoryNameHe}</span>
+                        <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>{cat.categoryNameHe}</span>
                       </div>
                       <span className="font-jetbrains-mono text-xs font-bold" style={{ color: catColor }}>
                         {Math.round(cat.score)}
                       </span>
                     </div>
-                    <div className="h-[3px] overflow-hidden rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.06)" }}>
+                    <div className="h-[3px] overflow-hidden rounded-full" style={{ backgroundColor: "rgba(15,23,42,0.06)" }}>
                       <motion.div
                         className="h-full rounded-full"
                         style={{ backgroundColor: catColor }}

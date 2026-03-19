@@ -69,14 +69,14 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="he" dir="rtl" className="dark">
+    <html lang="he" dir="rtl" className="light">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-screen bg-dark-500 font-dm-sans antialiased" style={{ color: "#E8E4DC" }}>
+      <body className="min-h-screen font-dm-sans antialiased" style={{ backgroundColor: "var(--bg)", color: "var(--text-primary)" }}>
         <PageTransition>
           {children}
         </PageTransition>

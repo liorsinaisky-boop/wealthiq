@@ -5,13 +5,13 @@ import type { RedFlag } from "@/lib/score-engine/red-flags";
 
 function RedFlagCard({ flag, index }: { flag: RedFlag; index: number }) {
   const isCritical = flag.severity === "critical";
-  const accentColor = isCritical ? "#E24B4A" : "#EF9F27";
+  const accentColor = isCritical ? "#EF4444" : "var(--tangerine)";
   const bgColor = isCritical
-    ? "rgba(226,75,74,0.06)"
-    : "rgba(239,159,39,0.06)";
+    ? "rgba(239,68,68,0.06)"
+    : "rgba(255,107,0,0.06)";
   const borderColor = isCritical
-    ? "rgba(226,75,74,0.2)"
-    : "rgba(239,159,39,0.2)";
+    ? "rgba(239,68,68,0.2)"
+    : "rgba(255,107,0,0.2)";
 
   return (
     <motion.div
@@ -52,7 +52,7 @@ function RedFlagCard({ flag, index }: { flag: RedFlag; index: number }) {
             className="font-sora font-bold"
             style={{
               fontSize: "20px",
-              color: "#E8E4DC",
+              color: "var(--text-primary)",
               letterSpacing: "-0.3px",
               lineHeight: 1.25,
               marginBottom: "6px",
@@ -64,7 +64,7 @@ function RedFlagCard({ flag, index }: { flag: RedFlag; index: number }) {
             className="font-dm-sans"
             style={{
               fontSize: "15px",
-              color: "#8A8680",
+              color: "var(--text-muted)",
               lineHeight: 1.55,
               margin: 0,
             }}
@@ -89,7 +89,7 @@ function RedFlagCard({ flag, index }: { flag: RedFlag; index: number }) {
           <div
             style={{
               fontSize: "11px",
-              color: "#5A5650",
+              color: "var(--text-dim)",
               marginTop: "5px",
               whiteSpace: "nowrap",
             }}
@@ -123,7 +123,7 @@ export default function RedFlagsSection({ flags }: RedFlagsSectionProps) {
           className="font-sora font-bold"
           style={{
             fontSize: "28px",
-            color: "#E8E4DC",
+            color: "var(--text-primary)",
             letterSpacing: "-0.5px",
             marginBottom: "6px",
           }}
@@ -132,7 +132,7 @@ export default function RedFlagsSection({ flags }: RedFlagsSectionProps) {
         </h2>
         <p
           className="font-dm-sans"
-          style={{ fontSize: "15px", color: "#8A8680", marginBottom: "20px" }}
+          style={{ fontSize: "15px", color: "var(--text-muted)", marginBottom: "20px" }}
         >
           נמצאו {countLabel} בפרופיל הפיננסי שלך
         </p>

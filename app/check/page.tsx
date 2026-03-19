@@ -124,16 +124,16 @@ export default function CheckPage() {
   }, [currentStep, isLastStep, markComplete, nextStep, handleSubmit]);
 
   return (
-    <main className="min-h-screen px-4 py-8" style={{ backgroundColor: "#06080C" }}>
+    <main className="min-h-screen px-4 py-8" style={{ backgroundColor: "var(--bg)" }}>
       <div className="mx-auto max-w-2xl">
 
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="mb-2 font-sora text-2xl font-bold">
-            <span className="gold-text">WealthIQ</span>
-            <span style={{ color: "#E8E4DC" }}> Check</span>
+            <span className="tangerine-text">WealthIQ</span>
+            <span style={{ color: "var(--text-primary)" }}> Check</span>
           </h1>
-          <p className="text-sm" style={{ color: "#8A8680" }}>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
             ענה/י על השאלות — הכל נשאר אצלך, לא שומרים כלום
           </p>
         </div>
@@ -141,10 +141,10 @@ export default function CheckPage() {
         {/* Progress */}
         <div className="mb-8">
           <div className="mb-2 flex items-center justify-between text-sm">
-            <span style={{ color: "#8A8680" }}>
+            <span style={{ color: "var(--text-muted)" }}>
               {STEP_ICONS[currentStep]} {STEP_NAMES_HE[currentStep]}
             </span>
-            <span className="font-jetbrains-mono text-xs" style={{ color: "#5A5650" }}>
+            <span className="font-jetbrains-mono text-xs" style={{ color: "var(--text-dim)" }}>
               {currentIdx + 1} / {totalSteps}
             </span>
           </div>
@@ -152,7 +152,7 @@ export default function CheckPage() {
           {/* Progress bar — 3px, gold fill, RTL */}
           <div
             className="h-[3px] w-full overflow-hidden rounded-full"
-            style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+            style={{ backgroundColor: "rgba(15,23,42,0.06)" }}
           >
             <motion.div
               className="progress-fill h-full rounded-full"
@@ -174,15 +174,15 @@ export default function CheckPage() {
                   height: "8px",
                   backgroundColor:
                     step === currentStep
-                      ? "#C8A24E"
+                      ? "var(--tangerine)"
                       : completedSteps.includes(step)
-                      ? "rgba(200,162,78,0.45)"
+                      ? "rgba(255,107,0,0.45)"
                       : i < currentIdx
-                      ? "rgba(200,162,78,0.25)"
-                      : "rgba(255,255,255,0.08)",
+                      ? "rgba(255,107,0,0.25)"
+                      : "rgba(15,23,42,0.08)",
                   transform: step === currentStep ? "scale(1.3)" : "scale(1)",
                   cursor: completedSteps.includes(step) || i <= currentIdx ? "pointer" : "default",
-                  boxShadow: step === currentStep ? "0 0 8px rgba(200,162,78,0.5)" : "none",
+                  boxShadow: step === currentStep ? "0 0 8px var(--tangerine-glow)" : "none",
                 }}
                 title={STEP_NAMES_HE[step]}
               />
@@ -199,9 +199,9 @@ export default function CheckPage() {
               exit={{ opacity: 0, y: -8 }}
               className="mb-5 rounded-xl border px-4 py-3 text-sm"
               style={{
-                backgroundColor: "rgba(200,162,78,0.06)",
-                borderColor: "rgba(200,162,78,0.2)",
-                color: "#C8A24E",
+                backgroundColor: "rgba(255,107,0,0.06)",
+                borderColor: "rgba(255,107,0,0.2)",
+                color: "var(--tangerine)",
               }}
             >
               🎯 כמעט באמצע! עוד 4 קטגוריות לסיום.
@@ -227,7 +227,7 @@ export default function CheckPage() {
         {/* Error */}
         {error && (
           <div
-            className="mb-6 rounded-xl border px-4 py-3 text-sm"
+            className="mb-6 rounded-xl border px-4 py-3 text-sm animate-shake"
             style={{
               backgroundColor: "rgba(239,68,68,0.06)",
               borderColor: "rgba(239,68,68,0.25)",
@@ -266,7 +266,7 @@ export default function CheckPage() {
             <button
               onClick={handleNext}
               disabled={isSubmitting}
-              className="btn-gold flex items-center gap-1.5 disabled:opacity-60"
+              className="btn-tangerine flex items-center gap-1.5 disabled:opacity-60"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
@@ -274,7 +274,7 @@ export default function CheckPage() {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     className="inline-block h-4 w-4 rounded-full border-2"
-                    style={{ borderColor: "rgba(6,8,12,0.3)", borderTopColor: "#06080C" }}
+                    style={{ borderColor: "rgba(15,23,42,0.1)", borderTopColor: "var(--tangerine)" }}
                   />
                   מחשב...
                 </span>
@@ -288,7 +288,7 @@ export default function CheckPage() {
           </div>
         )}
 
-        <p className="mt-8 text-center text-xs" style={{ color: "#3D3A38" }}>
+        <p className="mt-8 text-center text-xs" style={{ color: "var(--text-dim)" }}>
           מידע כללי בלבד. אינו מהווה ייעוץ פנסיוני או המלצה.
         </p>
       </div>
